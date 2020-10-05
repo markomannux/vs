@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
     if (err) {
       console.log(err);
     }
-    console.log(appointments)
+
     res.render('calendar', {
       title: 'Calendario',
       appointments: appointments

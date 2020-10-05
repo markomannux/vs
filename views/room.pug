@@ -2,4 +2,11 @@ extends layout
 
 block content
   h1= title
-  p Room
+  h2 In corso
+  h2 Sala d'attesa
+  h2 Pianificate
+    ul
+      each appointment in planned
+        li= appointment.summary
+
+

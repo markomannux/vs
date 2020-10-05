@@ -1,9 +1,15 @@
 var express = require('express');
 var router = express.Router();
+const Appointment = require('../model/appointment');
 
-/* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.render('room');
+
+  Appointment.find((err, appointments) => {
+    res.render('room', {
+      title: 'Room',
+      planned: appointments
+    });
+  })
 });
 
 module.exports = router;
