@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1= title
+
+  form(action="/contacts", method="post")
+    input(type="text", name="fullName")
+    |
+    input(type="text", name="email")
+    |
+    button(type="submit") Invia
+  
+  div.contacts
+    ul
+      each contact in contacts
+        li
+          a(href=`/contacts/${contact._id}`) #{contact.fullName}

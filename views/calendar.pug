@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+
+  div.appointments
+    ul
+      each appointment in appointments
+        li
+          span= appointment.date
+          |
+          |
+          a(href=`/appointment/${appointment._id}`) #{appointment.summary}
