@@ -7,7 +7,7 @@ block content
   p= contact.email
 
   p Nuovo appuntamento
-  form(action="/appointment", method="post")
+  form(action="/appointments", data-remote="true", data-method="post")
     div
         | titolo:
         input(type="text", name="summary")
@@ -15,8 +15,23 @@ block content
         | data:
         input(type="datetime-local", name="date")
     div
+        | room:
+        select#room-select(name="room")
+            option(value="") -
+    div
         | note:
         textarea(name="notes", cols="30", rows="10")
     div
         input(type="hidden", name="contact", value=`${contact._id}`)
         input(type="submit", value="Invia")
+
+
+  script. 
+    fetchRooms().then(rooms => {
+        console.log(rooms);
+        rooms.forEach(room => {
+            const roomSelect = $('#room-select');
+            const option = $.parseHTML(`<option value="${room.id}">${room.name}</option>`)
+            roomSelect.append(option);
+        })
+    })

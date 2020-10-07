@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const Room = require('./room');
 const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema({
@@ -7,6 +8,9 @@ const appointmentSchema = new Schema({
   },
   contact: {
       type: Schema.Types.ObjectId, ref: 'Contact'
+  },
+  room: {
+      type: Schema.Types.ObjectId, ref: 'Room'
   },
   date: {
       type: String

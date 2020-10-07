@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "start-dev": "nodemon ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -18,5 +19,8 @@
     "pug": "2.0.0-beta11",
     "socket.io": "^2.3.0",
     "turbolinks": "^5.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }

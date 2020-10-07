@@ -4,6 +4,8 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src="/javascripts/turbolinks.js")
+    script(src="/javascripts/rails-ujs.js")
+    script(src="/javascripts/rooms.js")
   body
     a(href="/contacts") Contatti
     |
@@ -11,10 +13,10 @@ html
     a(href="/calendar") Calendario
     |
     |
-    a(href="/room") Stanza
+    a(href="/rooms") Stanza
 
     block content
 
-     
+    script(src="http://code.jquery.com/jquery-3.5.1.slim.min.js", integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=", crossorigin="anonymous") 
     script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.min.js')
     script(src='/javascripts/client.js')
