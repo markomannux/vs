@@ -1,5 +1,7 @@
 extends layout
 
+block scripts
+
 block content
   h1= title
 
@@ -25,13 +27,3 @@ block content
         input(type="hidden", name="contact", value=`${contact._id}`)
         input(type="submit", value="Invia")
 
-
-  script. 
-    fetchRooms().then(rooms => {
-        console.log(rooms);
-        rooms.forEach(room => {
-            const roomSelect = $('#room-select');
-            const option = $.parseHTML(`<option value="${room.id}">${room.name}</option>`)
-            roomSelect.append(option);
-        })
-    })

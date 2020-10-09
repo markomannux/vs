@@ -1,4 +1,4 @@
-function fetchRooms() {
+export default function fetchRooms() {
     return fetch("http://localhost:3000/rooms", {
         "method": "GET",
         "headers": {
