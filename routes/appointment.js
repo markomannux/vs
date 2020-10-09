@@ -5,7 +5,9 @@ const Appointment = require('../model/appointment');
 router.post('/', async function(req, res, next) {
     let appointment = new Appointment(req.body);
     appointment = await appointment.save();
-    res.render('appointment', {appointment: data});
+    res
+    .set('Content-Type', 'application/javascript')
+    .render('js/redirect', {appointment: appointment, redirect: "/contacts"});
 });
 
 router.delete('/:id', async function(req, res, next) {

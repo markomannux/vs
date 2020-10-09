@@ -9,7 +9,7 @@ block content
   p= contact.email
 
   p Nuovo appuntamento
-  form(action="/appointments", data-remote="true", data-method="post")
+  form(action="/appointments", data-remote="true", method="post")
     div
         | titolo:
         input(type="text", name="summary")

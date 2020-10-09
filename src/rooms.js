@@ -6,7 +6,7 @@ document.addEventListener("turbolinks:load", function() {
     if (roomSelect) {
         fetchRooms().then(rooms => {
             rooms.forEach(room => {
-                const option = $.parseHTML(`<option value="${room.id}">${room.name}</option>`)
+                const option = $.parseHTML(`<option value="${room._id}">${room.name}</option>`)
                 roomSelect.append(option);
             })
         })
