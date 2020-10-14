@@ -1,7 +1,16 @@
 extends layout
 
+block scripts
+
 block content
   h1= title
+  video(autoplay, playsinline, controls, muted)
+  video(autoplay, playsinline, controls, muted)
+
+  button#master-button Start master
+  button#stop-master-button Stop master
+
+
   h2 In corso
   h2 Sala d'attesa
   h2 Pianificate
@@ -9,4 +18,4 @@ block content
       each appointment in planned
         li= appointment.summary
 
-
+  script(src="/javascripts/kinesis.bundle.js")

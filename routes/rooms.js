@@ -12,16 +12,23 @@ router.get('/', async function(req, res, next) {
   res.render('rooms', {rooms: rooms});
 });
 
+router.get('/viewer', function(req, res, next) {
+  res.render('viewer_room');
+})
+
 router.get('/:id', function(req, res, next) {
   Appointment.find({
     room: req.params.id
   },(err, appointments) => {
     res.render('room', {
       title: 'Room',
-      planned: appointments
+      planned: appointments,
+      accessKeyId: process.env.ACCESS_KEY_ID,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY
     });
   })
 });
+
 
 router.post('/', async function(req, res, next) {
   const room = new Room(req.body);

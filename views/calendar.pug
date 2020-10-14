@@ -11,3 +11,6 @@ block content
           |
           |
           a(href=`/appointments/${appointment._id}`) #{appointment.summary}
+          |
+          |
+          a(href=`/appointments/${appointment._id}`, data-method="delete", data-remote="true") x

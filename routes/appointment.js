@@ -11,9 +11,11 @@ router.post('/', async function(req, res, next) {
 });
 
 router.delete('/:id', async function(req, res, next) {
-    Appointment.findById(req.params.id);
-    appointment = await appointment.delete((err, data) => {
-        res.redirect('calendar');
+    let appointment = Appointment.findById(req.params.id);
+    appointment = await appointment.remove((err, data) => {
+        res
+        .set('Content-Type', 'application/javascript')
+        .render('js/redirect', {redirect: "/calendar"});
     });
 });
 

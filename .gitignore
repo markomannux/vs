@@ -62,3 +62,5 @@ typings/
 etc/requests.http
 public/javascripts/rooms.bundle.js
 public/javascripts/index.bundle.js
+etc/accessKeyId.txt
+etc/secretAccessKey.txt

@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  video(autoplay, playsinline, controls, muted)
+  video(autoplay, playsinline, controls, muted)
+
+  button#viewer-button Start viewer
+  button#stop-viewer-button Stop viewer
+
+  script(src="/javascripts/kinesis.bundle.js")
