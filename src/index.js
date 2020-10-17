@@ -10,8 +10,8 @@ document.addEventListener('turbolinks:load', (event) => {
     console.log('page loaded', event)
 })
 
-socket.emit('operator:connected')
+socket.emit('operator:connected', {operator: 'test'})
 
-socket.on('user:waiting', (data) => {
+socket.on('guest:waiting', (data) => {
     console.log(`user waiting`, data);
 })

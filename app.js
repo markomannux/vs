@@ -19,6 +19,8 @@ var appointmentsRouter = require('./routes/appointment');
 var calendarRouter = require('./routes/calendar');
 var roomRouter = require('./routes/rooms');
 
+require('./data-init')
+
 var app = express();
 
 // view engine setup

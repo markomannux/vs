@@ -60,7 +60,6 @@ typings/
 # next.js build output
 .next
 etc/requests.http
-public/javascripts/rooms.bundle.js
-public/javascripts/index.bundle.js
+public/javascripts/*.bundle.js
 etc/accessKeyId.txt
 etc/secretAccessKey.txt

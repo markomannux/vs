@@ -3,7 +3,7 @@ extends layout
 block content
   h1= title
 
-  form(action="/contacts", method="post")
+  form(action="/contacts", data-remote="true", method="post")
     input(type="text", name="fullName")
     |
     input(type="text", name="email")

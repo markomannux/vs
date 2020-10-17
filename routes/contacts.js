@@ -19,7 +19,9 @@ router.post('/', function(req, res, next) {
   const contact = new Contact(req.body);
   contact.save()
   .then((err, data) => {
-    res.redirect('/contacts');
+    res
+    .set('Content-Type', 'application/javascript')
+    .render('js/redirect', {redirect: "/contacts"});
   });
 });
 
