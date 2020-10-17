@@ -10,8 +10,14 @@ router.post('/', async function(req, res, next) {
     .render('js/redirect', {appointment: appointment, redirect: "/contacts"});
 });
 
+router.get('/:id/waitingroom', async function(req, res, next) {
+    let appointment = await Appointment.findById(req.params.id);
+    console.log(`Sending to waiting room for appointment ${appointment.id}: room ${appointment.room}`);
+    res.render('waitingroom', {appointment});
+})
+
 router.delete('/:id', async function(req, res, next) {
-    let appointment = Appointment.findById(req.params.id);
+    let appointment = await Appointment.findById(req.params.id);
     appointment = await appointment.remove((err, data) => {
         res
         .set('Content-Type', 'application/javascript')

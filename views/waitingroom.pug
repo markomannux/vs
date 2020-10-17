@@ -1,0 +1,11 @@
+extends layouts/guest
+
+block content
+  h1 Sala d'attesa
+
+  div
+    p Appuntamento #{appointment._id}
+    input#appointment_id(type='hidden', value=appointment._id)
+    input#room_id(type='hidden', value=appointment.room)
+
+  script(src="/javascripts/waitingroom.bundle.js")

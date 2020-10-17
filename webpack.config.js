@@ -21,6 +21,7 @@ module.exports = {
     entry: {
         index: './src/index.js',
         rooms: './src/rooms.js',
+        waitingroom: './src/waitingroom.js',
         kinesis: './src/kinesis/index.js'
     },
     output: {
