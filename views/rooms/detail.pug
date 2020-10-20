@@ -1,6 +1,7 @@
-extends layout
+extends ../layouts/operator
 
 block scripts
+  script(src='/javascripts/waitinglist.bundle.js', defer)
 
 block content
   h1= title
@@ -13,6 +14,8 @@ block content
 
   h2 In corso
   h2 Sala d'attesa
+    ul(data-behavior='waiting-list')
+      include fragments/waiting_list
   h2 Pianificate
     ul
       each appointment in planned

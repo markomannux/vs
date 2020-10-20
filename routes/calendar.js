@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
       console.log(err);
     }
 
-    res.render('calendar', {
+    res.render('calendar/index', {
       title: 'Calendario',
       appointments: appointments
     });

@@ -5,15 +5,9 @@ const Contact = require('../model/contact');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   Contact.find((err, contacts) => {
-    res.render('contacts', {contacts: contacts});
+    res.render('contacts/index', {contacts: contacts});
   });
 });
-
-router.get('/:id', (req, res, next) => {
-  Contact.findById(req.params.id, (err, contact) => {
-    res.render('contact', {contact: contact});
-  })
-})
 
 router.post('/', function(req, res, next) {
   const contact = new Contact(req.body);
@@ -24,5 +18,12 @@ router.post('/', function(req, res, next) {
     .render('js/redirect', {redirect: "/contacts"});
   });
 });
+
+router.get('/:id', (req, res, next) => {
+  Contact.findById(req.params.id, (err, contact) => {
+    res.render('contacts/detail', {contact: contact});
+  })
+})
+
 
 module.exports = router;

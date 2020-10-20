@@ -1,9 +1,9 @@
-extends layout
+extends ../layouts/operator
 
 block content
   h1= title
 
-  form(action="/rooms", method="post")
+  form(action="/rooms", data-remote=true, method="post")
     input(type="text", name="name")
     |
     button(type="submit") Invia

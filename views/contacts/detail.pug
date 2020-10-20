@@ -1,4 +1,4 @@
-extends layout
+extends ../layouts/operator
 
 block scripts
 
@@ -18,7 +18,7 @@ block content
         input(type="datetime-local", name="date")
     div
         | room:
-        select#room-select(name="room")
+        select(name="room", data-behavior="room-select")
             option(value="") -
     div
         | note:
@@ -27,3 +27,5 @@ block content
         input(type="hidden", name="contact", value=`${contact._id}`)
         input(type="submit", value="Invia")
 
+
+    script(src="/javascripts/contact.bundle.js")

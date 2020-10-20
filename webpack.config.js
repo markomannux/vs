@@ -20,7 +20,8 @@ module.exports = {
     watch: true,
     entry: {
         index: './src/index.js',
-        rooms: './src/rooms.js',
+        contact: './src/contact.js',
+        waitinglist: './src/waiting-list.js',
         waitingroom: './src/waitingroom.js',
         kinesis: './src/kinesis/index.js'
     },
