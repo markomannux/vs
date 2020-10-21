@@ -6,10 +6,14 @@ const WaitingListService = require('../services/waiting-list');
 
 router.get('/', async function(req, res, next) {
   const rooms = await Room.find();
-  if (req.accepts('application/json')) {
-    return res.json(rooms);
+  switch (req.accepts(['json', 'html'])) {
+    case 'html':
+      res.render('rooms/index', {rooms: rooms});
+      break
+    case 'json':
+      res.json(rooms);
+      break
   }
-  res.render('rooms/index', {rooms: rooms});
 });
 
 router.post('/', async function(req, res, next) {
