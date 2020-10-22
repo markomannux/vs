@@ -8,8 +8,17 @@ function waitingList(room) {
     return [..._waitingLists[room] || []]
 }
 
+function isWaiting(appointment) {
+    return !waitingList(appointment.room._id).every(element => {
+        console.log(element._id, appointment._id)
+        return !element._id.equals(appointment._id);
+    })
+}
+
 function addToWaitingList(appointment) {
-    _waitingLists[appointment.room._id] = [...(_waitingLists[appointment.room._id] || []), appointment];
+    if (!isWaiting(appointment)) {
+        _waitingLists[appointment.room._id] = [...(_waitingLists[appointment.room._id] || []), appointment];
+    }
 }
 
 function removeFromWaitingList(appointment) {
@@ -21,6 +30,7 @@ function removeFromWaitingList(appointment) {
 module.exports = {
     waitingLists,
     waitingList,
+    isWaiting,
     addToWaitingList,
     removeFromWaitingList
 }

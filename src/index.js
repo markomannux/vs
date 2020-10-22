@@ -7,10 +7,12 @@ Turbolinks.start();
 const socket = io();
 
 document.addEventListener('turbolinks:load', (event) => {
-    console.log('page loaded', event)
+    // noop
 })
 
-socket.emit('operator:connected', {operator: 'test'})
+socket.on('connect', () => {
+    socket.emit('operator:connected', {operator: 'test'})
+})
 
 socket.on('guest:waiting', (data) => {
     console.log(`user waiting`, data);

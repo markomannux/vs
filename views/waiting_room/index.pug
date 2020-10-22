@@ -1,5 +1,8 @@
 extends ../layouts/guest
 
+block scripts
+  script(src="/javascripts/waitingroom.bundle.js")
+
 block content
   h1 Sala d'attesa
 
@@ -8,4 +11,6 @@ block content
     input#appointment_id(type='hidden', value=appointment._id)
     input#room_id(type='hidden', value=appointment.room)
 
-  script(src="/javascripts/waitingroom.bundle.js")
+    div#already-waiting
+      p Sei già in attesa su un'altra pagina
+      button#wait-here Attendi qui

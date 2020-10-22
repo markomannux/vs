@@ -21,12 +21,40 @@ const SocketHandler = (server) => {
             })
         }
 
-        const handleGuestWaiting = async (data) => {
+        let appointment;
+
+        const handleGuestConnected = async (data, fn) => {
             console.log('new guest waiting', data);
-            const appointment = await Appointment.findById(data.appointment_id);
-            WaitingListService.addToWaitingList(appointment);
-            socket.on('disconnect', handleGuestDisconnect(appointment)) // register cleanup behavior
-            socket.to(appointment.room._id).emit('guest:waiting', JSON.stringify(appointment));
+            appointment = await Appointment.findById(data.appointment_id);
+            console.log('Already waiting', WaitingListService.isWaiting(appointment));
+            socket.join(appointment.room._id);
+            if (WaitingListService.isWaiting(appointment)) {
+                fn({
+                    guestWaitingElsewhere: true
+                })
+            } else {
+                WaitingListService.addToWaitingList(appointment);
+                socket.on('disconnect', handleGuestDisconnect) // register cleanup behavior
+                socket.to(appointment.room._id).emit('guest:waiting', JSON.stringify(appointment));
+                fn({
+                    guestWaitingElsewhere: false
+                })
+            }
+
+            socket.on('guest:wait-here', handleWaitHere);
+            socket.on('guest:dont-wait-here', handleDontWaitHere);
+        }
+
+        const handleWaitHere = async (data, fn) => {
+            console.log('guest is changing waiting room');
+            socket.on('disconnect', handleGuestDisconnect)
+            socket.to(appointment.room._id).emit('guest:waiting-elsewhere');
+            fn('ACK');
+        }
+
+        const handleDontWaitHere = async (data, fn) => {
+            socket.off('disconnect', handleGuestDisconnect)
+            fn('ACK');
         }
 
         /**
@@ -41,17 +69,15 @@ const SocketHandler = (server) => {
          * Disconnect behavior for guests
          * @param {*} appointment 
          */
-        const handleGuestDisconnect = (appointment) => {
-            return (s) => {
-                console.log('guest disconnected');
-                WaitingListService.removeFromWaitingList(appointment);
-                console.log('current waiting lists', WaitingListService.waitingLists());
-                socket.to(appointment.room._id).emit('guest:disconnect', JSON.stringify(appointment));
-            }
+        const handleGuestDisconnect = (s) => {
+            console.log('guest disconnected');
+            WaitingListService.removeFromWaitingList(appointment);
+            console.log('current waiting lists', WaitingListService.waitingLists());
+            socket.to(appointment.room._id).emit('guest:disconnect', JSON.stringify(appointment));
         }
 
         socket.on('operator:connected', handleOperatorConnected)
-        socket.on('guest:waiting', handleGuestWaiting)
+        socket.on('guest:connected', handleGuestConnected)
         socket.on('disconnect', handleDisconnect)
     })
 }
