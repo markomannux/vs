@@ -1,4 +1,4 @@
-import fetchRooms from './rooms-service';
+import {fetchRooms} from './rooms-service';
 
 const roomSelect = $('[data-behavior~=room-select]');
 fetchRooms().then(rooms => {

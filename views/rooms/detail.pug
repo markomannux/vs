@@ -1,5 +1,12 @@
 extends ../layouts/operator
 
+block meta
+  meta(name='page', content='waiting-list')
+  meta(name='room-id', content=roomId)
+
+block scripts
+  script(src='/javascripts/waiting-list.bundle.js', defer)
+
 block content
   h1= title
   video(autoplay, playsinline, controls, muted)
@@ -18,5 +25,4 @@ block content
       each appointment in planned
         li= appointment.summary
 
-  script(src='/javascripts/waitinglist.bundle.js', defer)
   script(src="/javascripts/kinesis.bundle.js")

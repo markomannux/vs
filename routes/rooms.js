@@ -30,6 +30,7 @@ router.get('/:id', function(req, res, next) {
   },(err, appointments) => {
     res.render('rooms/detail', {
       title: 'Room',
+      roomId: req.params.id,
       waitingList: WaitingListService.waitingList(req.params.id),
       planned: appointments,
       accessKeyId: process.env.ACCESS_KEY_ID,
