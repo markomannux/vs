@@ -25,5 +25,14 @@ router.get('/:id', (req, res, next) => {
   })
 })
 
+router.delete('/:id', async (req, res, next) => {
+  let contact = await Contact.findById(req.params.id)
+  contact.remove((err, data) => {
+      res
+      .set('Content-Type', 'application/javascript')
+      .render('js/redirect', {redirect: "/contacts"});
+  })
+})
+
 
 module.exports = router;

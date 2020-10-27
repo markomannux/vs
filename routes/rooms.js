@@ -39,6 +39,15 @@ router.get('/:id', function(req, res, next) {
   })
 });
 
+router.delete('/:id', async function(req, res, next) {
+  const room = await Room.findById(req.params.id)
+  room.remove((err, data) => {
+    res
+    .set('Content-Type', 'application/javascript')
+    .render('js/redirect', {redirect: "/rooms"});
+  })
+});
+
 router.get('/:id/fragments/waitingList', (req, res, next) => {
   res.render('rooms/fragments/waiting_list', {waitingList: WaitingListService.waitingList(req.params.id)});
 })

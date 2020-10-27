@@ -15,3 +15,6 @@ block content
       each contact in contacts
         li
           a(href=`/contacts/${contact._id}`) #{contact.fullName}
+          |
+          |
+          a(href=`/contacts/${contact._id}`, data-method="delete", data-remote="true") x

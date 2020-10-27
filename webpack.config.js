@@ -20,7 +20,6 @@ module.exports = [{
     watch: true,
     entry: {
         index: './src/index.js',
-        contact: './src/contact.js',
         waitingroom: './src/waitingroom.js',
         kinesis: './src/kinesis/index.js',
     },
@@ -35,39 +34,5 @@ module.exports = [{
             SECRET_ACCESS_KEY: webpack.DefinePlugin.runtimeValue(secretAccessKeyValue, [secretAccessKey])
         })
     ],
-},
-{
-    target: "web",
-    watch: true,
-    entry: {
-        library: 'SocketBus',
-        libraryTarget: 'var',
-        socketHandler: './src/socket-handler/index.js'
-    },
-    output: {
-        path: path.resolve(__dirname, 'public/javascripts/'),
-        filename: 'socketHandler.bundle.js'
-    },
-    plugins: [
-    ],
-},
-{
-    watch: true,
-    entry: './src/waiting-list.js',
-    output: {
-        library: 'waitingList',
-        libraryTarget: 'var',
-        libraryExport: 'default',
-        path: path.resolve(__dirname, 'public/javascripts/'),
-        filename: 'waiting-list.bundle.js'
-    },
-    externals: {
-        jquery: {
-            commonjs: 'jquery',
-            commonjs2: 'jquery',
-            amd: 'jquery',
-            root: '$'
-        }
-    }
 }
 ];

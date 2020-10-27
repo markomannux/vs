@@ -13,3 +13,6 @@ block content
       each room in rooms
         li
           a(href=`/rooms/${room._id}`) #{room.name}
+          |
+          |
+          a(href=`/rooms/${room._id}`, data-method="delete", data-remote="true") x

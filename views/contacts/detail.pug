@@ -1,6 +1,7 @@
 extends ../layouts/operator
 
-block scripts
+block meta
+  meta(name='page', content='contact-detail')
 
 block content
   h1= title
@@ -26,6 +27,3 @@ block content
     div
         input(type="hidden", name="contact", value=`${contact._id}`)
         input(type="submit", value="Invia")
-
-
-    script(src="/javascripts/contact.bundle.js")
