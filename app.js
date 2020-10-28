@@ -12,8 +12,11 @@ const mongoOptions = {
 }
 mongoose.connect(process.env.MONGO_URI, mongoOptions);
 
+var adminRouter = require('./routes/admin/index');
+var usersAdminRouter = require('./routes/admin/users');
+var roomsAdminRouter = require('./routes/admin/rooms');
+
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var contactsRouter = require('./routes/contacts');
 var appointmentsRouter = require('./routes/appointment');
 var calendarRouter = require('./routes/calendar');
@@ -33,8 +36,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/admin', adminRouter);
+app.use('/admin/users', usersAdminRouter);
+app.use('/admin/rooms', roomsAdminRouter);
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/contacts', contactsRouter);
 app.use('/appointments', appointmentsRouter);
 app.use('/calendar', calendarRouter);

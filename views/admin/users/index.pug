@@ -1,0 +1,20 @@
+extends ../../layouts/admin
+
+block content
+  h1= title
+
+  form(action="/admin/users", data-remote="true", method="post")
+    input(type="text", name="username")
+    |
+    input(type="text", name="name")
+    |
+    button(type="submit") Invia
+  
+  div.users
+    ul
+      each user in users
+        li
+          a(href=`/admin/users/${user._id}`) #{user.name}
+          |
+          |
+          a(href=`/admin/users/${user._id}`, data-method="delete", data-remote="true") 

@@ -3,16 +3,8 @@ extends ../layouts/operator
 block content
   h1= title
 
-  form(action="/rooms", data-remote=true, method="post")
-    input(type="text", name="name")
-    |
-    button(type="submit") Invia
-  
   div.rooms
     ul
       each room in rooms
         li
           a(href=`/rooms/${room._id}`) #{room.name}
-          |
-          |
-          a(href=`/rooms/${room._id}`, data-method="delete", data-remote="true") x

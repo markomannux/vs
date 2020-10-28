@@ -16,14 +16,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.post('/', async function(req, res, next) {
-  const room = new Room(req.body);
-  await room.save()
-  res
-  .set('Content-Type', 'application/javascript')
-  .render('js/redirect', {redirect: "/rooms"});
-});
-
 router.get('/:id', function(req, res, next) {
   Appointment.find({
     room: req.params.id
@@ -36,15 +28,6 @@ router.get('/:id', function(req, res, next) {
       accessKeyId: process.env.ACCESS_KEY_ID,
       secretAccessKey: process.env.SECRET_ACCESS_KEY
     });
-  })
-});
-
-router.delete('/:id', async function(req, res, next) {
-  const room = await Room.findById(req.params.id)
-  room.remove((err, data) => {
-    res
-    .set('Content-Type', 'application/javascript')
-    .render('js/redirect', {redirect: "/rooms"});
   })
 });
 

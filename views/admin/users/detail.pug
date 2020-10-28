@@ -1,0 +1,29 @@
+extends ../../layouts/admin
+
+block meta
+  meta(name='page', content='admin-user-detail')
+
+block content
+  h1= title
+
+  form(action=`/admin/users/${user._id}`, data-remote="true", method="put")
+    input(type="text", name="username", value=user.username)
+    |
+    input(type="text", name="name", value=user.name)
+    |
+    button(type="submit") Invia
+    
+  h2 Stanze associate
+  
+  div
+    form(action=`/admin/users/${user._id}/room`, data-remote="true", method="post")
+      | Stanza:
+      select(name="room", data-behavior="room-select")
+          option(value="") -
+      input(type="submit", value="Collega stanza")
+
+  div.rooms
+    ul
+      each room in user.rooms
+        li
+          a(href=`/admin/rooms/${room._id}`) #{room.name}

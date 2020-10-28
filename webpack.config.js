@@ -19,6 +19,7 @@ module.exports = [{
     target: "web",
     watch: true,
     entry: {
+        admin: './src/admin/index.js',
         index: './src/index.js',
         waitingroom: './src/waitingroom.js',
         kinesis: './src/kinesis/index.js',

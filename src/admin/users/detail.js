@@ -1,14 +1,16 @@
-import {fetchRooms} from '../rooms-service';
-
+import {fetchRooms} from '../../rooms-service';
+console.log('setting up listeners');
 document.addEventListener('turbolinks:load', () => {
     const page = $('[name=page]').attr('content')
-    if (page === 'contact-detail') {
+    console.log('aaaa', page);
+    if (page === 'admin-user-detail') {
+    console.log('setting unp');
         setUp()
     }
 })
 
 function setUp() {
-    console.log('setup contact-detail');
+    console.log('setting unp');
     const roomSelect = $('[data-behavior~=room-select]');
     fetchRooms().then(rooms => {
         rooms.forEach(room => {

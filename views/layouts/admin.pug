@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    block meta
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="http://code.jquery.com/jquery-3.5.1.slim.min.js", integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=", crossorigin="anonymous") 
+    script(src='/javascripts/admin.bundle.js', defer)
+    block scripts
+  body
+    a(href="/admin/users") Utenti
+    |
+    |
+    a(href="/admin/rooms") Stanze
+    |
+    |
+    a(href="/", data-turbolinks="false") Esci da admin
+
+    block content
