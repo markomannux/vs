@@ -8,6 +8,9 @@ const userSchema = new Schema({
   name: {
     type: String
   },
+  email: {
+    type: String
+  },
   rooms: [
       { type: Schema.Types.ObjectId, ref: 'Room' }
     ]
