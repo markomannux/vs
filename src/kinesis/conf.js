@@ -6,7 +6,7 @@ const region = 'eu-central-1';
 const clientId = 'test-kinesis-client';
 const sendVideo = true;
 const sendAudio = false;
-const useTrickleICE = false;
+const useTrickleICE = true;
 
 export {
     channelARN,

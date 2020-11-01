@@ -27,7 +27,7 @@ const SocketHandler = (server) => {
             console.log('new guest waiting', data);
             appointment = await Appointment.findById(data.appointment_id);
             console.log('Already waiting', WaitingListService.isWaiting(appointment));
-            socket.join(appointment.room._id);
+            socket.join(`${appointment.room._id}:${appointment._id}`);
             if (WaitingListService.isWaiting(appointment)) {
                 fn({
                     guestWaitingElsewhere: true
@@ -48,13 +48,19 @@ const SocketHandler = (server) => {
         const handleWaitHere = async (data, fn) => {
             console.log('guest is changing waiting room');
             socket.on('disconnect', handleGuestDisconnect)
-            socket.to(appointment.room._id).emit('guest:waiting-elsewhere');
+            socket.to(`${appointment.room._id}:${appointment._id}`).emit('guest:waiting-elsewhere');
             fn('ACK');
         }
 
         const handleDontWaitHere = async (data, fn) => {
             socket.off('disconnect', handleGuestDisconnect)
             fn('ACK');
+        }
+
+        const handleStartConference = async (data) => {
+            console.log('starting conference', data);
+            const appointment = await Appointment.findById(data.appointment);
+            socket.to(`${appointment.room._id}:${appointment._id}`).emit('conference:start')
         }
 
         /**
@@ -77,6 +83,7 @@ const SocketHandler = (server) => {
         }
 
         socket.on('operator:connected', handleOperatorConnected)
+        socket.on('operator:let-guest-enter', handleStartConference)
         socket.on('guest:connected', handleGuestConnected)
         socket.on('disconnect', handleDisconnect)
     })

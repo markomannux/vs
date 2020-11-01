@@ -14,7 +14,7 @@ block content
     ul
       each user in users
         li
-          a(href=`/admin/users/${user._id}`) #{user.name}
+          a(href=`/admin/users/${user._id}`) #{user.username}
           |
           |
           a(href=`/admin/users/${user._id}`, data-method="delete", data-remote="true") 

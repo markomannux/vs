@@ -13,6 +13,12 @@ const handleWaitingListEvent = () => {
 const setUp = () => {
     SocketBus.socket.on('guest:waiting', handleWaitingListEvent)
     SocketBus.socket.on('guest:disconnect', handleWaitingListEvent)
+
+    $('[data-behavior~=waiting-list]').on("click", 'button[data-behavior~=guest-join-button]', function(event) {
+        const appointment = $(this).data('appointment')
+        console.log(appointment)
+        SocketBus.socket.emit('operator:let-guest-enter', {appointment: appointment})
+    })
 }
 
 const tearDown = () => {
