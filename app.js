@@ -132,6 +132,10 @@ app.get('/login', passport.authenticate('oauth2',
 app.get('/auth/loginCallback', passport.authenticate('oauth2', { failureRedirect: '/'}), (req, res) => {
   return res.redirect('/')
 })
+app.get('/logout', (req, res) => {
+  req.logOut()
+  res.redirect('/')
+})
 app.use('/admin', adminRouter);
 app.use('/admin/users', usersAdminRouter);
 app.use('/admin/rooms', roomsAdminRouter);
