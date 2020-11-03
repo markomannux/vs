@@ -49,7 +49,7 @@ var roomRouter = require('./routes/rooms');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(session({
+const sessionMiddleware = session({
     secret: process.env.COOKIE_KEY || "cookie_secret_123",
     resave: true,
     saveUninitialized: true,
@@ -58,7 +58,10 @@ app.use(session({
         maxAge: 2592000000
     },
     store: new MongoStore({client: mongoose.connection.getClient()})
-}));
+})
+
+app.use(sessionMiddleware);
+app.sessionMiddleware = sessionMiddleware // Storing a reference to session middleware for use in other modules
 
 app.use(logger('dev'));
 app.use(express.json());

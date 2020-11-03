@@ -3,16 +3,15 @@ const User = require('../model/user');
 const Appointment = require('../model/appointment');
 const WaitingListService = require('../services/waiting-list');
 
-const SocketHandler = (server) => {
-
-    const io = require('socket.io')(server);
+const SocketHandler = (io) => {
 
     io.on('connection', socket => {
         console.log('new client connected');
 
         const handleOperatorConnected = (data) => {
-            console.log('new operator connected', data);
-            User.findOne({ username: data.operator})
+            const sessionData = socket.request.session
+            console.log('new operator connected', sessionData.passport.user);
+            User.findOne({ username: sessionData.passport.user})
             .then(user => {
                 user.rooms.forEach(room => {
                     console.log(`joining room ${room._id}`);

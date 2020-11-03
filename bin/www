@@ -24,7 +24,11 @@ var server = http.createServer(app);
 /**
  * Initialize socket io
  */
-const SocketHandler = require('../socket-handler')(server);
+const io = require('socket.io')(server);
+io.use((socket, next) => {
+  app.sessionMiddleware(socket.request, {}, next)
+})
+const SocketHandler = require('../socket-handler')(io);
 
 /**
  * Listen on provided port, on all network interfaces.
