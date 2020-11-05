@@ -3,7 +3,6 @@ html
   head
     block meta
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
     block scripts
       script(src="http://code.jquery.com/jquery-3.5.1.slim.min.js", integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=", crossorigin="anonymous") 
       script(src="https://sdk.amazonaws.com/js/aws-sdk-2.771.0.min.js")
@@ -11,18 +10,28 @@ html
       script(src='/javascripts/index.bundle.js', defer)
       script(src='/javascripts/socketHandler.bundle.js')
   body
-    a(href="/contacts") Contatti
-    |
-    |
-    a(href="/calendar") Calendario
-    |
-    |
-    a(href="/rooms") Stanza
-    |
-    |
-    a(href="/admin", data-turbolinks="false") Admin
-    |
-    |
-    a(href="/logout", data-turbolinks="false") Logout
+    <!-- Navbar section -->
+    <header class="text-gray-700 body-font">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <span class="ml-3 text-xl">Virtual Studio</span>
+      </a>
+      <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
+        <a href="/calendar" class="mr-5 hover:text-gray-900">Calendario</a>
+        <a href="/contacts" class="mr-5 hover:text-gray-900">Contatti</a>
+        <a href="/rooms" class="mr-5 hover:text-gray-900">Stanze</a>
+        <a href="/logout" data-turbolinks="false" class="mr-5 hover:text-gray-900">Logout</a>
+      </nav>
+      <a href="/admin" data-turbolinks="false" class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">Admin
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </header>
+  <!-- End Navbar section -->
 
     block content

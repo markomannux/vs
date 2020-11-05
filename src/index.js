@@ -5,6 +5,8 @@ import './contacts/detail'
 //import './waitingroom'
 import './rooms/detail'
 
+import css from './style.css'
+
 // Monkey patch Turbolinks to render 403, 404 & 500 normally
 // See https://github.com/turbolinks/turbolinks/issues/179
 Turbolinks.HttpRequest.prototype.requestLoaded = function() {
