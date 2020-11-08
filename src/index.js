@@ -1,6 +1,7 @@
 import Rails from 'rails-ujs';
 import Turbolinks from 'turbolinks'
 import SocketBus from './socket-handler/index';
+import './contacts/index'
 import './contacts/detail'
 //import './waitingroom'
 import './rooms/detail'
