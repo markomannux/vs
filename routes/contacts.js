@@ -5,7 +5,10 @@ const Contact = require('../model/contact');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   Contact.find((err, contacts) => {
-    res.render('contacts/index', {contacts: contacts});
+    res.render('contacts/index', {
+      title: 'Contatti',
+      contacts: contacts
+    });
   });
 });
 
@@ -21,7 +24,10 @@ router.post('/', function(req, res, next) {
 
 router.get('/:id', (req, res, next) => {
   Contact.findById(req.params.id, (err, contact) => {
-    res.render('contacts/detail', {contact: contact});
+    res.render('contacts/detail', {
+      title: contact.fullName,
+      contact: contact
+    });
   })
 })
 

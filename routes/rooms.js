@@ -8,7 +8,10 @@ router.get('/', async function(req, res, next) {
   const rooms = await Room.find();
   switch (req.accepts(['json', 'html'])) {
     case 'html':
-      res.render('rooms/index', {rooms: rooms});
+      res.render('rooms/index', {
+        title: 'Stanze',
+        rooms: rooms
+      });
       break
     case 'json':
       res.json(rooms);
@@ -16,19 +19,20 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-router.get('/:id', function(req, res, next) {
-  Appointment.find({
+router.get('/:id', async function(req, res, next) {
+  const room = await Room.findById(req.params.id)
+  const appointments = await Appointment.find({
     room: req.params.id
-  },(err, appointments) => {
-    res.render('rooms/detail', {
-      title: 'Room',
-      roomId: req.params.id,
-      waitingList: WaitingListService.waitingList(req.params.id),
-      planned: appointments,
-      accessKeyId: process.env.ACCESS_KEY_ID,
-      secretAccessKey: process.env.SECRET_ACCESS_KEY
-    });
-  })
+  }).populate('contact')
+
+  res.render('rooms/detail', {
+    title: room.name,
+    room,
+    waitingList: WaitingListService.waitingList(req.params.id),
+    planned: appointments,
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY
+  });
 });
 
 router.get('/:id/fragments/waitingList', (req, res, next) => {
