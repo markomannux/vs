@@ -21,11 +21,12 @@ router.get('/:id/waitingroom', async function(req, res, next) {
 
 router.delete('/:id', async function(req, res, next) {
     let appointment = await Appointment.findById(req.params.id);
-    appointment.remove((err, data) => {
-        res
-        .set('Content-Type', 'application/javascript')
-        .render('js/redirect', {redirect: "/calendar"});
-    });
+    await appointment.remove()
+    const redirectTo = req.query.redirectTo || '/calendar'
+    console.log(redirectTo)
+    res
+    .set('Content-Type', 'application/javascript')
+    .render('js/redirect', {redirect: redirectTo});
 });
 
 module.exports = router;

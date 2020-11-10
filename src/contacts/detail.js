@@ -9,6 +9,11 @@ document.addEventListener('turbolinks:load', () => {
 
 function setUp() {
     console.log('setup contact-detail');
+
+    $('[data-behavior~=new-appointment-button]').on('click', () => {
+        $('[data-behavior~=new-appointment-form]').toggle()
+    })
+    
     const roomSelect = $('[data-behavior~=room-select]');
     fetchRooms().then(rooms => {
         rooms.forEach(room => {

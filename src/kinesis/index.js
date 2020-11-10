@@ -5,18 +5,25 @@ function onStatsReport(report) {
     // TODO: Publish stats
 }
 
-$('#master-button').click(async () => {
+$('#master-button').on('click', async () => {
     const localView = $('video')[0];
     const remoteView = $('video')[1];
 
-    master.startMaster(localView, remoteView, onStatsReport, event => {
+    await master.startMaster(localView, remoteView, onStatsReport, event => {
         remoteMessage.append(`${event.data}\n`);
     });
+
+    $('#master-button').hide()
+    $('#stop-master-button').show()
 });
 
-$('#stop-master-button').click(master.stopMaster);
+$('#stop-master-button').on('click', async () => {
+    master.stopMaster()
+    $('#master-button').show()
+    $('#stop-master-button').hide()
+});
 
-$('#viewer-button').click(async () => {
+$('#viewer-button').on('click', async () => {
     const localView = $('video')[0];
     const remoteView = $('video')[1];
 
@@ -25,4 +32,4 @@ $('#viewer-button').click(async () => {
     });
 });
 
-$('#stop-viewer-button').click(viewer.stopViewer);
+$('#stop-viewer-button').on('click', viewer.stopViewer);
