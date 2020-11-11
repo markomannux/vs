@@ -23,7 +23,6 @@ router.delete('/:id', async function(req, res, next) {
     let appointment = await Appointment.findById(req.params.id);
     await appointment.remove()
     const redirectTo = req.query.redirectTo || '/calendar'
-    console.log(redirectTo)
     res
     .set('Content-Type', 'application/javascript')
     .render('js/redirect', {redirect: redirectTo});

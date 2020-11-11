@@ -1,40 +1,32 @@
+import PageController from '../common/page-controller'
 import {fetchWaitingListHTML} from '../rooms-service'
 import SocketBus from '../socket-handler/index';
 
+class RoomDetailController extends PageController {
 
-const handleWaitingListEvent = () => {
-    const roomId = $('[name=room-id]').attr('content')
-    console.log('guest waiting', roomId);
-    fetchWaitingListHTML(roomId)
-    .then(result => $('[data-behavior~=waiting-list]').html(result))
-    .catch(error => console.log('error', error));
-}
-
-const setUp = () => {
-    SocketBus.socket.on('guest:waiting', handleWaitingListEvent)
-    SocketBus.socket.on('guest:disconnect', handleWaitingListEvent)
-
-    $('[data-behavior~=waiting-list]').on("click", 'button[data-behavior~=guest-join-button]', function(event) {
-        const appointment = $(this).data('appointment')
-        console.log(appointment)
-        SocketBus.socket.emit('operator:let-guest-enter', {appointment: appointment})
-    })
-}
-
-const tearDown = () => {
-    SocketBus.socket.off('guest:waiting', handleWaitingListEvent)
-    SocketBus.socket.off('guest:disconnect', handleWaitingListEvent)
-}
-
-document.addEventListener('turbolinks:before-render', () => {
-    tearDown();
-})
-
-// Called once after the initial page has loaded
-document.addEventListener( 'turbolinks:load', () => {
-    const page = $('[name=page]').attr('content')
-    console.log(page)
-    if (page === 'room-detail') {
-        setUp()
+    handleWaitingListEvent() {
+        const roomId = $('[name=room-id]').attr('content')
+        console.log('guest waiting', roomId);
+        fetchWaitingListHTML(roomId)
+        .then(result => $('[data-behavior~=waiting-list]').html(result))
+        .catch(error => console.log('error', error));
     }
-});
+
+    setUp() {
+        SocketBus.socket.on('guest:waiting', this.handleWaitingListEvent)
+        SocketBus.socket.on('guest:disconnect', this.handleWaitingListEvent)
+
+        $('[data-behavior~=waiting-list]').on("click", 'button[data-behavior~=guest-join-button]', function(event) {
+            const appointment = $(this).data('appointment')
+            console.log(appointment)
+            SocketBus.socket.emit('operator:let-guest-enter', {appointment: appointment})
+        })
+    }
+
+    tearDown() {
+        SocketBus.socket.off('guest:waiting', this.handleWaitingListEvent)
+        SocketBus.socket.off('guest:disconnect', this.handleWaitingListEvent)
+    }
+}
+
+new RoomDetailController('room-detail')

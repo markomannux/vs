@@ -1,23 +1,17 @@
-const setUp = () => {
-    $('[data-behavior~=add-contact-button]').on("click", function(event) {
-     $('[data-behavior~=add-contact-form]').toggle()
-     $('#fullName').trigger('focus')
-    })
-}
+import PageController from '../common/page-controller'
 
-const tearDown = () => {
-    $('[data-behavior~=add-contact-form]').hide()
-}
+class ContactsIndexController extends PageController {
 
-document.addEventListener('turbolinks:before-render', () => {
-    tearDown();
-})
-
-// Called once after the initial page has loaded
-document.addEventListener( 'turbolinks:load', () => {
-    const page = $('[name=page]').attr('content')
-    console.log(page)
-    if (page === 'contacts-index') {
-        setUp()
+    setUp() {
+        $('[data-behavior~=add-contact-button]').on("click", function(event) {
+            $('[data-behavior~=add-contact-form]').toggle()
+            $('#fullName').trigger('focus')
+        })
     }
-});
+
+    tearDown() {
+        $('[data-behavior~=add-contact-form]').hide()
+    }
+}
+
+new ContactsIndexController('contacts-index')
