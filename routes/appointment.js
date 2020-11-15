@@ -5,9 +5,10 @@ const Appointment = require('../model/appointment');
 router.post('/', async function(req, res, next) {
     let appointment = new Appointment(req.body);
     appointment = await appointment.save();
+    const redirectTo = req.query.redirectTo || '/calendar'
     res
     .set('Content-Type', 'application/javascript')
-    .render('js/redirect', {appointment: appointment, redirect: "/contacts"});
+    .render('js/redirect', {redirect: redirectTo});
 });
 
 router.get('/:id/waitingroom', async function(req, res, next) {

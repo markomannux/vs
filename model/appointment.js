@@ -13,7 +13,7 @@ const appointmentSchema = new Schema({
       type: Schema.Types.ObjectId, ref: 'Room'
   },
   date: {
-      type: String
+      type: Date
   },
   notes: {
       type: String

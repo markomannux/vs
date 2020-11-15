@@ -23,7 +23,9 @@ router.get('/:id', async function(req, res, next) {
   const room = await Room.findById(req.params.id)
   const appointments = await Appointment.find({
     room: req.params.id
-  }).populate('contact')
+  })
+  .sort({date: 1})
+  .populate('contact')
 
   res.render('rooms/detail', {
     title: room.name,

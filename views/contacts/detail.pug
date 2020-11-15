@@ -25,7 +25,7 @@ block content
 
             button(data-behavior="new-appointment-button" class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md object-none object-right") Nuovo appuntamento
 
-            form(action="/appointments", data-remote="true", method="post" class="hidden" data-behavior='new-appointment-form')
+            form(action=`/appointments?redirectTo=/contacts/${contact._id}`, data-remote="true", method="post" class="hidden" data-behavior='new-appointment-form')
               <div class="p-4 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
                 <div class="relative mb-4">
                   <label for="summary" class="leading-7 text-sm text-gray-600">Titolo</label>
@@ -45,7 +45,7 @@ block content
                   textarea(name="notes", cols="30", rows="10", class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out")
                 </div>
                 input(type="hidden", name="contact", value=`${contact._id}`)
-                input(type="submit", value="Invia", class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg")
+                input(type="submit", value="Inserisci", class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg")
               </div>
             div
               <h2 class="font-medium title-font mt-8 mb-4 text-gray-900 text-lg">Prossimi appuntamenti</h2>
@@ -61,7 +61,27 @@ block content
                       </svg>
                     </div>
                     <div class="flex-grow pl-4">
-                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{appointment.date}</h2>
+                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.date)}</h2>
+                      <p class="leading-relaxed">#{appointment.summary}</p>
+                      <p class="leading-relaxed">#{appointment.notes}</p>
+                      a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${contact._id}`, data-remote='true', data-method='delete') Elimina
+                    </div>
+                  </div>
+
+              <h2 class="font-medium title-font mt-8 mb-4 text-gray-900 text-lg">Appuntamenti precedenti</h2>
+                each appointment in pastAppointments
+                  <div class="flex relative pb-12">
+                    <div class="h-full w-10 absolute inset-0 flex items-center justify-center">
+                      <div class="h-full w-1 bg-gray-200 pointer-events-none"></div>
+                    </div>
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-500 inline-flex items-center justify-center text-white relative z-10">
+                      <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div class="flex-grow pl-4">
+                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.date)}</h2>
                       <p class="leading-relaxed">#{appointment.summary}</p>
                       <p class="leading-relaxed">#{appointment.notes}</p>
                       a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${contact._id}`, data-remote='true', data-method='delete') Elimina

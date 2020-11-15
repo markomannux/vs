@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Contact = require('../model/contact');
 const Appointment = require('../model/appointment')
+const dateUtils = require('../utils/date-utils')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -25,19 +26,22 @@ router.post('/', function(req, res, next) {
 
 router.get('/:id', async (req, res, next) => {
   const contact = await Contact.findById(req.params.id)
-  const appointments = await Appointment.find({contact: contact})
+  const today = dateUtils.convertToDateString(new Date())
+  const appointments = await Appointment.find({contact: contact, date: {$gte: today}}).sort({date: 1})
+  const pastAppointments = await Appointment.find({contact: contact, date: {$lt: today}}).sort({date: 1}).limit(10)
   res.render('contacts/detail', {
-    title: contact.fullName,
+    title: contact.fullname,
     contact,
-    appointments
+    appointments,
+    pastAppointments
   });
 })
 
 router.delete('/:id', async (req, res, next) => {
-  let contact = await Contact.findById(req.params.id)
+  let contact = await contact.findbyid(req.params.id)
   contact.remove((err, data) => {
       res
-      .set('Content-Type', 'application/javascript')
+      .set('content-type', 'application/javascript')
       .render('js/redirect', {redirect: "/contacts"});
   })
 })

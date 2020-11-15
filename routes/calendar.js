@@ -3,17 +3,12 @@ var router = express.Router();
 const Appointment = require('../model/appointment');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  Appointment.find((err, appointments) => {
-    if (err) {
-      console.log(err);
-    }
-
-    res.render('calendar/index', {
-      title: 'Calendario',
-      appointments: appointments
-    });
-  })
+router.get('/', async (req, res, next) => {
+  const appointments = await Appointment.find().sort({date: 1})
+  res.render('calendar/index', {
+    title: 'Calendario',
+    appointments: appointments
+  });
 });
 
 module.exports = router;

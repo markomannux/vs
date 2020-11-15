@@ -20,6 +20,7 @@ const mongoOptions = {
 }
 const User = require('./model/user')
 const authUtils = require('./utils/auth-utils')
+const dateUtils = require('./utils/date-utils')
 
 const POOL_BASE_URL = process.env.POOL_BASE_URL;
 const AUTH_URL = process.env.AUTH_URL; 
@@ -82,6 +83,11 @@ passport.deserializeUser(async (username, done) => {
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+/*
+ * Registering helper functions
+ */
+app.locals.helperFormatDate = dateUtils.formatDate
 
 OAuth2Strategy.prototype.userProfile = async function(accessToken, done) {
 var headers = new Headers();
