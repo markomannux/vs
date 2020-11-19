@@ -32,8 +32,8 @@ block content
                   <input type="text" id="summary" name="summary" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                 </div>
                 <div class="relative mb-4">
-                  <label for="date" class="leading-7 text-sm text-gray-600">Data</label>
-                  <input type="datetime-local" id="date" name="date" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                  <label for="start" class="leading-7 text-sm text-gray-600">Data</label>
+                  <input type="datetime-local" id="start" name="start" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                 </div>
                 <div class="relative mb-4">
                   <label for="room" class="leading-7 text-sm text-gray-600">Stanza</label>
@@ -61,7 +61,7 @@ block content
                       </svg>
                     </div>
                     <div class="flex-grow pl-4">
-                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.date)}</h2>
+                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.start)}</h2>
                       <p class="leading-relaxed">#{appointment.summary}</p>
                       <p class="leading-relaxed">#{appointment.notes}</p>
                       a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${contact._id}`, data-remote='true', data-method='delete') Elimina
@@ -81,7 +81,7 @@ block content
                       </svg>
                     </div>
                     <div class="flex-grow pl-4">
-                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.date)}</h2>
+                      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.start)}</h2>
                       <p class="leading-relaxed">#{appointment.summary}</p>
                       <p class="leading-relaxed">#{appointment.notes}</p>
                       a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${contact._id}`, data-remote='true', data-method='delete') Elimina

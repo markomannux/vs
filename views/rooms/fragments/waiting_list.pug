@@ -13,7 +13,7 @@ each appointment in waitingList
       </svg>
     </div>
     <div class="flex-grow pl-4">
-      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{appointment.date}</h2>
+      <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.start)}</h2>
       <p class="leading-relaxed">#{appointment.contact.fullName}</p>
       <p class="leading-relaxed">#{appointment.summary}</p>
       button(data-behavior="guest-join-button", class="text-white bg-indigo-500 border-0 py-1 px-3 focus:outline-none hover:bg-indigo-600 rounded text-sm", data-appointment=appointment._id) Fai entrare

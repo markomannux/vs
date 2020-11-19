@@ -3,6 +3,7 @@ import Turbolinks from 'turbolinks'
 import SocketBus from './socket-handler/index';
 import './contacts/index'
 import './contacts/detail'
+import './calendar/index'
 //import './waitingroom'
 import './rooms/detail'
 

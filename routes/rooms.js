@@ -3,6 +3,7 @@ var router = express.Router();
 const Appointment = require('../model/appointment');
 const Room = require('../model/room');
 const WaitingListService = require('../services/waiting-list');
+const dateUtils = require('../utils/date-utils')
 
 router.get('/', async function(req, res, next) {
   const rooms = await Room.find();
@@ -21,8 +22,11 @@ router.get('/', async function(req, res, next) {
 
 router.get('/:id', async function(req, res, next) {
   const room = await Room.findById(req.params.id)
+  const today = dateUtils.convertToDateString(new Date())
+  const tomorrow = dateUtils.convertToDateString(new Date(new Date().getTime() + 24 * 60 * 60 * 1000))
   const appointments = await Appointment.find({
-    room: req.params.id
+    room: req.params.id,
+    start: {$gte: today, $lt: tomorrow}
   })
   .sort({date: 1})
   .populate('contact')

@@ -1,16 +1,23 @@
 extends ../layouts/guest
 
 block content
-  h1 Sala d'attesa
+  section
+    div.container.px-5.mx-auto
+      h1.text-xl Sala d'attesa
 
-  div
-    p Appuntamento #{appointment._id}
-    input#appointment_id(type='hidden', value=appointment._id)
-    input#room_id(type='hidden', value=appointment.room)
+      div.mb-5
+        p Appuntamento #{appointment._id}
+        input#appointment_id(type='hidden', value=appointment._id)
+        input#room_id(type='hidden', value=appointment.room)
 
-    div#already-waiting
-      p Sei già in attesa su un'altra pagina
-      button#wait-here Attendi qui
+        div#already-waiting
+          p Sei già in attesa su un'altra pagina
+          button#wait-here(class="text-white bg-indigo-500 border-0 py-1 px-3 focus:outline-none hover:bg-indigo-600 rounded text-sm") Attendi qui
 
-  video(autoplay, playsinline, controls, muted)
-  video(autoplay, playsinline, controls, muted)
+  section#video-cnt
+    div.container.px-5.mx-auto
+      <div class="relative">
+        div.mb-3
+          video(autoplay, playsinline, controls, muted, width='20%', class="z-50 absolute top-0 right-0")
+          video(autoplay, playsinline, controls, muted, width='100%')
+      </div>

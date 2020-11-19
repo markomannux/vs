@@ -24,7 +24,12 @@ function padDateElement(elem)  {
     return elem.toString().padStart(2, '0')
 }
 
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes*60000);
+}
+
 module.exports = {
+    addMinutes,
     convertToDateString,
     formatDate
 }

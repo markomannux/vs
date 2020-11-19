@@ -27,8 +27,8 @@ router.post('/', function(req, res, next) {
 router.get('/:id', async (req, res, next) => {
   const contact = await Contact.findById(req.params.id)
   const today = dateUtils.convertToDateString(new Date())
-  const appointments = await Appointment.find({contact: contact, date: {$gte: today}}).sort({date: 1})
-  const pastAppointments = await Appointment.find({contact: contact, date: {$lt: today}}).sort({date: 1}).limit(10)
+  const appointments = await Appointment.find({contact: contact, start: {$gte: today}}).sort({start: 1})
+  const pastAppointments = await Appointment.find({contact: contact, start: {$lt: today}}).sort({start: 1}).limit(10)
   res.render('contacts/detail', {
     title: contact.fullname,
     contact,

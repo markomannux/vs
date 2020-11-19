@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 import * as viewer from './kinesis/viewer'
+import css from './style.css'
 
 const socket = io();
 let waitHere = true;
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Guest is waiting on another page')        
         waitHere = false;
         $('#already-waiting').show();
+        $('#video-cnt').hide()
     }
 
     $('#already-waiting').hide();
@@ -27,12 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     socket.on('conference:start', () => {
-        const localView = $('video')[0];
-        const remoteView = $('video')[1];
+        if (waitHere) {
+            const localView = $('video')[0];
+            const remoteView = $('video')[1];
 
-        viewer.startViewer(localView, remoteView, onStatsReport, event => {
-            remoteMessage.append(`${event.data}\n`);
-        });
+            viewer.startViewer(localView, remoteView, onStatsReport, event => {
+                remoteMessage.append(`${event.data}\n`);
+            });
+        }
     })
 
     socket.on('connect', () => {
@@ -48,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#wait-here').on('click', (event) => {
         socket.emit('guest:wait-here', null, (data) => {
             waitHere = true;
-            $('#already-waiting').hide();
+            $('#already-waiting').hide()
+            $('#video-cnt').show()
         })
     })
 

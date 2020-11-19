@@ -1,19 +1,12 @@
 extends ../layouts/operator
 
-block content
-  h1= title
+block meta
+  meta(name='page', content='calendar-index')
 
-  div.appointments
-    ul
-      each appointment in appointments
-        li
-          span= appointment.date
-          |
-          |
-          a(href=`/appointments/${appointment._id}`) #{appointment.summary}
-          |
-          |
-          a(href=`/appointments/${appointment._id}`, data-method="delete", data-remote="true") x
-          |
-          |
-          a(href=`/appointments/${appointment._id}/waitingroom`) test sala d'attesa
+block content
+
+  <section class="text-gray-700 body-font">
+      <div class="container px-5 py-5 mx-auto flex flex-col">
+        div#calendar
+      </div>
+  </section>
