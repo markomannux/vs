@@ -38,7 +38,7 @@ router.get('/:id', async (req, res, next) => {
 })
 
 router.delete('/:id', async (req, res, next) => {
-  let contact = await contact.findbyid(req.params.id)
+  let contact = await Contact.findById(req.params.id)
   contact.remove((err, data) => {
       res
       .set('content-type', 'application/javascript')

@@ -1,6 +1,6 @@
 import PageController from '../common/page-controller'
 
-class ContactsIndexController extends PageController {
+export default class ContactsIndexController extends PageController {
 
     setUp() {
         $('[data-behavior~=add-contact-button]').on("click", function(event) {
@@ -14,4 +14,3 @@ class ContactsIndexController extends PageController {
     }
 }
 
-new ContactsIndexController('contacts-index')

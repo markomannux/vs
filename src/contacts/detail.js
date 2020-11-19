@@ -1,7 +1,7 @@
 import PageController from '../common/page-controller'
 import {fetchRooms} from '../rooms-service';
 
-class ContactDetailController extends PageController {
+export default class ContactDetailController extends PageController {
 
     setUp() {
         $('[data-behavior~=new-appointment-button]').on('click', () => {
@@ -18,4 +18,3 @@ class ContactDetailController extends PageController {
     }
 }
 
-new ContactDetailController('contact-detail')

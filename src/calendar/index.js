@@ -2,7 +2,7 @@ import PageController from '../common/page-controller'
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
-class CalendarIndexController extends PageController {
+export default class CalendarIndexController extends PageController {
     setUp() {
         var calendarEl = document.getElementById('calendar');
 
@@ -26,5 +26,3 @@ class CalendarIndexController extends PageController {
 
     }
 }
-
-new CalendarIndexController('calendar-index')

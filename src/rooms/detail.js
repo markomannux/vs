@@ -2,7 +2,7 @@ import PageController from '../common/page-controller'
 import {fetchWaitingListHTML} from '../rooms-service'
 import SocketBus from '../socket-handler/index';
 
-class RoomDetailController extends PageController {
+export default class RoomDetailController extends PageController {
 
     handleWaitingListEvent() {
         const roomId = $('[name=room-id]').attr('content')
@@ -28,5 +28,3 @@ class RoomDetailController extends PageController {
         SocketBus.socket.off('guest:disconnect', this.handleWaitingListEvent)
     }
 }
-
-new RoomDetailController('room-detail')
