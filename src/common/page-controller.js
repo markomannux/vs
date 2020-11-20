@@ -9,6 +9,10 @@ export default class PageController {
             }
         })
 
+        document.addEventListener('turbolinks:before-cache', () => {
+            this.beforeCache();
+        })
+
         document.addEventListener('turbolinks:before-render', () => {
             this.tearDown();
         })
@@ -16,6 +20,10 @@ export default class PageController {
 
     setUp() {
         console.log(`Setting up ${this.pageName}`)
+    }
+
+    beforeCache() {
+        console.log(`Before caching ${this.pageName}`)
     }
 
     tearDown() {

@@ -6,7 +6,7 @@ export default class CalendarIndexController extends PageController {
     setUp() {
         var calendarEl = document.getElementById('calendar');
 
-        var calendar = new Calendar(calendarEl, {
+        this.calendar = new Calendar(calendarEl, {
             plugins: [ dayGridPlugin ],
             events: '/calendar',
             eventDataTransform: function(eventData) {
@@ -19,10 +19,13 @@ export default class CalendarIndexController extends PageController {
 
         });
 
-        calendar.render(); 
+        this.calendar.render(); 
+    }
+
+    beforeCache() {
+        this.calendar.removeAllEvents()
     }
 
     tearDown() {
-
     }
 }
