@@ -1,24 +1,21 @@
 extends ../layouts/operator
+include ../mixins/_button
+include ../mixins/_form_control
 
 block meta
   meta(name='page', content='contacts-index')
+  meta(name='turbolinks-cache-control', content='no-preview')
 
 block content
 
   <section class="text-gray-700 body-font">
     div(class="container px-5 mx-auto")
-      <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" data-behavior="add-contact-button">Nuovo contatto</button>
+      +button('Nuovo contatto')(data-behavior="add-contact-button")
       <form action="/contacts" data-behavior="add-contact-form" data-remote="true" method="post" class="hidden">
         <div class="flex lg:w-2/3 w-full sm:flex-row flex-col mx-auto px-8 sm:px-0 items-end">
-          <div class="relative sm:mr-4 mb-4 sm:mb-0 flex-grow w-full">
-            <label for="fullName" class="leading-7 text-sm text-gray-600">Nominativo</label>
-            <input type="text" id="fullName" name="fullName" class="w-full bg-gray-100 rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <div class="relative sm:mr-4 mb-4 sm:mb-0 flex-grow w-full">
-            <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
-            <input type="email" id="email" name="email" class="w-full bg-gray-100 rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Inserisci</button>
+          +form_control('fullName', 'text', 'Nominativo')
+          +form_control('email', 'email', 'Email')
+          +button('Inserisci')
         </div>
       </form>
   </section>
