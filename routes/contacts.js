@@ -14,14 +14,17 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', async (req, res, next) => {
   const contact = new Contact(req.body);
-  contact.save()
-  .then((err, data) => {
-    res
-    .set('Content-Type', 'application/javascript')
-    .render('js/redirect', {redirect: `/contacts/${contact._id}`});
-  });
+  try {
+    await contact.save()
+    res.set('Content-Type', 'application/javascript')
+      .render('js/redirect', {redirect: `/contacts/${contact._id}`});
+  } catch (error) {
+    console.log(error)
+    res.set('Content-Type', 'application/javascript')
+      .render('js/showErrors', {errors: error.errors});
+  }
 });
 
 router.get('/:id', async (req, res, next) => {

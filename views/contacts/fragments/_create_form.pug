@@ -1,0 +1,10 @@
+include ../../mixins/_button
+include ../../mixins/_form_control
+
+<form action="/contacts" data-behavior="add-contact-form" data-remote="true" method="post" class="hidden">
+    <div class="flex lg:w-2/3 w-full sm:flex-row flex-col mx-auto px-8 sm:px-0 items-end">
+        +form_control('fullName', 'text', 'Nominativo')(required)
+        +form_control('email', 'email', 'Email')(required)
+        +button('Inserisci')
+    </div>
+</form>
