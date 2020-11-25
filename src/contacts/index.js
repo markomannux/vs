@@ -4,7 +4,7 @@ export default class ContactsIndexController extends PageController {
 
     setUp() {
         $('[data-behavior~=add-contact-button]').on("click", function(event) {
-            $('[data-behavior~=add-contact-form]').toggle()
+            $('[data-behavior~=add-contact-form-container]').toggle()
             $('#fullName').trigger('focus')
         })
     }

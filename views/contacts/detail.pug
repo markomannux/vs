@@ -1,5 +1,10 @@
 extends ../layouts/operator
 
+include ../mixins/_button
+include ../mixins/_form_control
+include ../mixins/_form_select
+include ../mixins/_form_textarea
+
 block meta
   meta(name='page', content='contact-detail')
 
@@ -27,23 +32,14 @@ block content
 
             form(action=`/appointments?redirectTo=/contacts/${contact._id}`, data-remote="true", method="post" class="hidden" data-behavior='new-appointment-form')
               <div class="p-4 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
-                <div class="relative mb-4">
-                  <label for="summary" class="leading-7 text-sm text-gray-600">Titolo</label>
-                  <input type="text" id="summary" name="summary" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                </div>
-                <div class="relative mb-4">
-                  <label for="start" class="leading-7 text-sm text-gray-600">Data</label>
-                  <input type="datetime-local" id="start" name="start" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-                </div>
-                <div class="relative mb-4">
-                  <label for="room" class="leading-7 text-sm text-gray-600">Stanza</label>
-                  select(name="room", data-behavior="room-select" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out")
-                      option(value="") -
-                </div>
-                <div class="relative mb-4">
-                  <label for="notes" class="leading-7 text-sm text-gray-600">Note</label>
-                  textarea(name="notes", cols="30", rows="10", class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out")
-                </div>
+                - var _model = model || {}
+                - var _errors = errors || {}
+              
+                +form_control('summary', 'text', 'Titolo', errors)(value=_model.summary)
+                +form_control('start', 'datetime-local', 'Data', errors)(value=_model.start)
+                +form_select('room', 'Stanza', errors)(value=_model.room, data-behavior="room-select")
+                +form_textarea('notes', 'Note', errors)(value=_model.room)
+
                 input(type="hidden", name="contact", value=`${contact._id}`)
                 input(type="submit", value="Inserisci", class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg")
               </div>

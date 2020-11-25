@@ -10,7 +10,8 @@ block content
   <section class="text-gray-700 body-font">
     div(class="container px-5 mx-auto")
       +button('Nuovo contatto')(data-behavior="add-contact-button")
-      include fragments/_create_form.pug
+      div(data-behavior="add-contact-form-container" class="hidden")
+        include fragments/_create_form.pug
   </section>
 
   <section class="text-gray-700 body-font">

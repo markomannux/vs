@@ -1,0 +1,6 @@
+- var _formSelector = `[data-behavior~=${action}-${resource}-form]`
+- var _path = `views/${resource}/fragments/_${action}_form.pug`
+
+|$('#{_formSelector}').replaceWith(`
+|!{helperInclude(_path, {model, errors}) } 
+|`)

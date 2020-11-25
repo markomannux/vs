@@ -23,7 +23,11 @@ router.post('/', async (req, res, next) => {
   } catch (error) {
     console.log(error)
     res.set('Content-Type', 'application/javascript')
-      .render('js/showErrors', {errors: error.errors});
+      .render('js/renderForm', {
+        action: 'create',
+        resource: 'contacts',
+        model: contact,
+        errors: error.errors});
   }
 });
 

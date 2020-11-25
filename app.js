@@ -88,6 +88,13 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Registering helper functions
  */
 app.locals.helperFormatDate = dateUtils.formatDate
+const pug = require('pug')
+const includeFunc = (pathToPug, options = {}) => {
+    return pug.renderFile(pathToPug, options); //render the pug file
+}
+app.locals.helperInclude = includeFunc
+
+
 
 OAuth2Strategy.prototype.userProfile = async function(accessToken, done) {
 var headers = new Headers();
