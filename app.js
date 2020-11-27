@@ -13,6 +13,8 @@ var passport        = require('passport');
 var OAuth2Strategy  = require('passport-oauth2');
 const mongoose      = require('mongoose')
 const Schema        = mongoose.Schema;
+const jwt           = require('jsonwebtoken')
+const cognitoClient = require('./utils/cognito-client')
 
 const mongoOptions = {
   useNewUrlParser: true,
@@ -22,7 +24,6 @@ const User = require('./model/user')
 const authUtils = require('./utils/auth-utils')
 const dateUtils = require('./utils/date-utils')
 
-const POOL_BASE_URL = process.env.POOL_BASE_URL;
 const AUTH_URL = process.env.AUTH_URL; 
 const TOKEN_URL = process.env.TOKEN_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -93,26 +94,12 @@ const includeFunc = (pathToPug, options = {}) => {
     return pug.renderFile(pathToPug, options); //render the pug file
 }
 app.locals.helperInclude = includeFunc
-
-
-
-OAuth2Strategy.prototype.userProfile = async function(accessToken, done) {
-var headers = new Headers();
-headers.append("Authorization", `Bearer ${accessToken}`);
-
-var requestOptions = {
-  method: 'GET',
-  headers: headers,
-  redirect: 'follow'
-};
-
-console.log('Requesting profile');
-const profile = await fetch(`${POOL_BASE_URL}/oauth2/userInfo`, requestOptions)
-  .then(response => response.text())
-  .then(result => done(null, result))
-  .catch(error => console.log('error', error));
-  return profile;
+const env = (envName) => {
+  return process.env[envName]
 }
+app.locals.env = env
+
+OAuth2Strategy.prototype.userProfile = cognitoClient.userProfile
 
 passport.use(new OAuth2Strategy({
     authorizationURL: AUTH_URL,
@@ -123,13 +110,16 @@ passport.use(new OAuth2Strategy({
   },
   async function(accessToken, refreshToken, profile, cb) {
     const parsedProfile = JSON.parse(profile)
+    const parsedToken = jwt.decode(accessToken)
+
     await User.findOneAndUpdate(
       {
         username: parsedProfile.username
       },
       {
         username: parsedProfile.username,
-        email: parsedProfile.email
+        email: parsedProfile.email,
+        roles: parsedToken['cognito:groups']
       },
       {
         upsert: true
@@ -148,18 +138,18 @@ app.get('/login', passport.authenticate('oauth2',
 app.get('/auth/loginCallback', passport.authenticate('oauth2', { failureRedirect: '/'}), (req, res) => {
   return res.redirect('/')
 })
-app.get('/logout', (req, res) => {
-  req.logOut()
+app.get('/auth/logoutCallback', (req, res) => {
+  req.logout()
   res.redirect('/')
 })
-app.use('/admin', adminRouter);
-app.use('/admin/users', usersAdminRouter);
-app.use('/admin/rooms', roomsAdminRouter);
-app.use('/', authUtils.isLoggedIn, indexRouter);
+app.use('/admin', authUtils.hasRole('admin'), adminRouter);
+app.use('/admin/users', authUtils.hasRole('admin'), usersAdminRouter);
+app.use('/admin/rooms', authUtils.hasRole('admin'), roomsAdminRouter);
+app.use('/', authUtils.isLoggedIn, authUtils.hasRole('user'), indexRouter);
 app.use('/contacts', contactsRouter);
-app.use('/appointments', appointmentsRouter);
-app.use('/calendar', calendarRouter);
-app.use('/rooms', roomRouter);
+app.use('/appointments', authUtils.hasRole('user'), appointmentsRouter);
+app.use('/calendar', authUtils.hasRole('user'), calendarRouter);
+app.use('/rooms', authUtils.hasRole('user'), roomRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

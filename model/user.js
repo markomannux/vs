@@ -13,7 +13,8 @@ const userSchema = new Schema({
   },
   rooms: [
       { type: Schema.Types.ObjectId, ref: 'Room' }
-    ]
+    ],
+  roles: [String]
 })
 
 const User = mongoose.model('User', userSchema);
