@@ -13,89 +13,36 @@ export async function startMaster(localView, remoteView, onStatsReport, onRemote
     master.localView = localView;
     master.remoteView = remoteView;
 
-    // Create KVS client
-    const kinesisVideoClient = new AWS.KinesisVideo({
-        region: conf.region,
-        accessKeyId: conf.accessKeyId,
-        secretAccessKey: conf.secretAccessKey,
-        sessionToken: conf.sessionToken,
-        endpoint: conf.endpoint,
-        correctClockSkew: true,
-    });
+    const baseUrl = `${window.location.protocol}//${window.location.host}`
 
+    let url = new URL('/signer/videoClientInfo', baseUrl)
+    let params = {role: KVSWebRTC.Role.MASTER}
+    url.search = new URLSearchParams(params).toString(); 
+    const vcInfo = await fetch(url).then(response => response.json())
+    console.log('[MASTER] Endpoints: ', vcInfo.endpointsByProtocol);
 
-        // Get signaling channel ARN
-    const describeSignalingChannelResponse = await kinesisVideoClient
-        .describeSignalingChannel({
-            ChannelName: conf.channelName,
-        })
-        .promise();
-    const channelARN = describeSignalingChannelResponse.ChannelInfo.ChannelARN;
-    console.log('[MASTER] Channel ARN: ', channelARN);
-
-
-        // Get signaling channel endpoints
-    const getSignalingChannelEndpointResponse = await kinesisVideoClient
-        .getSignalingChannelEndpoint({
-            ChannelARN: channelARN,
-            SingleMasterChannelEndpointConfiguration: {
-                Protocols: ['WSS', 'HTTPS'],
-                Role: KVSWebRTC.Role.MASTER,
-            },
-        })
-        .promise();
-    const endpointsByProtocol = getSignalingChannelEndpointResponse.ResourceEndpointList.reduce((endpoints, endpoint) => {
-        endpoints[endpoint.Protocol] = endpoint.ResourceEndpoint;
-        return endpoints;
-    }, {});
-    console.log('[MASTER] Endpoints: ', endpointsByProtocol);
-
-
-        // Create Signaling Client
+    // Create Signaling Client
     master.signalingClient = new KVSWebRTC.SignalingClient({
-        channelARN,
-        channelEndpoint: endpointsByProtocol.WSS,
+        channelARN: vcInfo.channelARN,
+        channelEndpoint: vcInfo.endpointsByProtocol.WSS,
         role: KVSWebRTC.Role.MASTER,
         region: conf.region,
-        credentials: {
-            accessKeyId: conf.accessKeyId,
-            secretAccessKey: conf.secretAccessKey,
-            sessionToken: conf.sessionToken,
+        requestSigner: {
+            getSignedURL: async function(endpoint, queryParams, date) {
+                let url = new URL('/signer/signedUrl', baseUrl)
+                let params = {endpoint, ...queryParams}
+                url.search = new URLSearchParams(params).toString(); 
+                const response = await fetch(url)
+                return response.text()
+            }
         },
-        systemClockOffset: kinesisVideoClient.config.systemClockOffset,
+        systemClockOffset: vcInfo.systemClockOffset,
     });
 
-        // Get ICE server configuration
-    const kinesisVideoSignalingChannelsClient = new AWS.KinesisVideoSignalingChannels({
-        region: conf.region,
-        accessKeyId: conf.accessKeyId,
-        secretAccessKey: conf.secretAccessKey,
-        sessionToken: conf.sessionToken,
-        endpoint: endpointsByProtocol.HTTPS,
-        correctClockSkew: true,
-    });
-    const getIceServerConfigResponse = await kinesisVideoSignalingChannelsClient
-        .getIceServerConfig({
-            ChannelARN: channelARN,
-        })
-        .promise();
-    const iceServers = [];
-    if (!conf.natTraversalDisabled && !conf.forceTURN) {
-        iceServers.push({ urls: `stun:stun.kinesisvideo.${conf.region}.amazonaws.com:443` });
-    }
-    if (!conf.natTraversalDisabled) {
-        getIceServerConfigResponse.IceServerList.forEach(iceServer =>
-            iceServers.push({
-                urls: iceServer.Uris,
-                username: iceServer.Username,
-                credential: iceServer.Password,
-            }),
-        );
-    }
+    const iceServers = vcInfo.iceServers
     console.log('[MASTER] ICE servers: ', iceServers);
 
-
-        const configuration = {
+    const configuration = {
         iceServers,
         iceTransportPolicy: conf.forceTURN ? 'relay' : 'all',
     };
@@ -206,8 +153,8 @@ export async function startMaster(localView, remoteView, onStatsReport, onRemote
         console.log('[MASTER] Disconnected from signaling channel');
     });
 
-    master.signalingClient.on('error', () => {
-        console.error('[MASTER] Signaling client error');
+    master.signalingClient.on('error', (err) => {
+        console.error('[MASTER] Signaling client error', err);
     });
 
     console.log('[MASTER] Starting master connection');

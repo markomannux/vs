@@ -45,6 +45,7 @@ var contactsRouter = require('./routes/contacts');
 var appointmentsRouter = require('./routes/appointment');
 var calendarRouter = require('./routes/calendar');
 var roomRouter = require('./routes/rooms');
+var signerRouter = require('./routes/signer')
 
 
 // view engine setup
@@ -150,6 +151,7 @@ app.use('/contacts', contactsRouter);
 app.use('/appointments', authUtils.hasRole('user'), appointmentsRouter);
 app.use('/calendar', authUtils.hasRole('user'), calendarRouter);
 app.use('/rooms', authUtils.hasRole('user'), roomRouter);
+app.use('/signer', signerRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

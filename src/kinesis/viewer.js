@@ -9,94 +9,46 @@ export async function startViewer(localView, remoteView, onStatsReport, onRemote
     viewer.localView = localView;
     viewer.remoteView = remoteView;
 
-    // Create KVS client
-    const kinesisVideoClient = new AWS.KinesisVideo({
-        region: conf.region,
-        accessKeyId: conf.accessKeyId,
-        secretAccessKey: conf.secretAccessKey,
-        sessionToken: conf.sessionToken,
-        endpoint: conf.endpoint,
-        correctClockSkew: true,
-    });
+    const baseUrl = `${window.location.protocol}//${window.location.host}`
 
-    // Get signaling channel ARN
-    const describeSignalingChannelResponse = await kinesisVideoClient
-        .describeSignalingChannel({
-            ChannelName: conf.channelName,
-        })
-        .promise();
-    const channelARN = describeSignalingChannelResponse.ChannelInfo.ChannelARN;
-    console.log('[VIEWER] Channel ARN: ', channelARN);
+    let url = new URL('/signer/videoClientInfo', baseUrl)
+    let params = {role: KVSWebRTC.Role.VIEWER}
+    url.search = new URLSearchParams(params).toString(); 
+    const vcInfo = await fetch(url).then(response => response.json())
+    console.log('[VIEWER] Endpoints: ', vcInfo.endpointsByProtocol);
 
-    // Get signaling channel endpoints
-    const getSignalingChannelEndpointResponse = await kinesisVideoClient
-        .getSignalingChannelEndpoint({
-            ChannelARN: channelARN,
-            SingleMasterChannelEndpointConfiguration: {
-                Protocols: ['WSS', 'HTTPS'],
-                Role: KVSWebRTC.Role.VIEWER,
-            },
-        })
-        .promise();
-    const endpointsByProtocol = getSignalingChannelEndpointResponse.ResourceEndpointList.reduce((endpoints, endpoint) => {
-        endpoints[endpoint.Protocol] = endpoint.ResourceEndpoint;
-        return endpoints;
-    }, {});
-    console.log('[VIEWER] Endpoints: ', endpointsByProtocol);
-
-    const kinesisVideoSignalingChannelsClient = new AWS.KinesisVideoSignalingChannels({
-        region: conf.region,
-        accessKeyId: conf.accessKeyId,
-        secretAccessKey: conf.secretAccessKey,
-        sessionToken: conf.sessionToken,
-        endpoint: endpointsByProtocol.HTTPS,
-        correctClockSkew: true,
-    });
-
-    // Get ICE server configuration
-    const getIceServerConfigResponse = await kinesisVideoSignalingChannelsClient
-        .getIceServerConfig({
-            ChannelARN: channelARN,
-        })
-        .promise();
-    const iceServers = [];
-    if (!conf.natTraversalDisabled && !conf.forceTURN) {
-        iceServers.push({ urls: `stun:stun.kinesisvideo.${conf.region}.amazonaws.com:443` });
-    }
-    if (!conf.natTraversalDisabled) {
-        getIceServerConfigResponse.IceServerList.forEach(iceServer =>
-            iceServers.push({
-                urls: iceServer.Uris,
-                username: iceServer.Username,
-                credential: iceServer.Password,
-            }),
-        );
-    }
-    console.log('[VIEWER] ICE servers: ', iceServers);
 
     // Create Signaling Client
     viewer.signalingClient = new KVSWebRTC.SignalingClient({
-        channelARN,
-        channelEndpoint: endpointsByProtocol.WSS,
+        channelARN: vcInfo.channelARN,
+        channelEndpoint: vcInfo.endpointsByProtocol.WSS,
         clientId: conf.clientId,
         role: KVSWebRTC.Role.VIEWER,
         region: conf.region,
-        credentials: {
-            accessKeyId: conf.accessKeyId,
-            secretAccessKey: conf.secretAccessKey,
-            sessionToken: conf.sessionToken,
+        requestSigner: {
+            getSignedURL: async function(endpoint, queryParams, date) {
+                let url = new URL('/signer/signedUrl', baseUrl)
+                let params = {endpoint, ...queryParams}
+                url.search = new URLSearchParams(params).toString(); 
+                const response = await fetch(url)
+                return response.text()
+            }
         },
-        systemClockOffset: kinesisVideoClient.config.systemClockOffset,
+        systemClockOffset: vcInfo.systemClockOffset,
     });
+
+    const iceServers = vcInfo.iceServers
+    console.log('[VIEWER] ICE servers: ', iceServers);
+
+    const configuration = {
+        iceServers,
+        iceTransportPolicy: conf.forceTURN ? 'relay' : 'all',
+    };
 
     const resolution = conf.widescreen ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
     const constraints = {
         video: conf.sendVideo ? resolution : false,
         audio: conf.sendAudio,
-    };
-    const configuration = {
-        iceServers,
-        iceTransportPolicy: conf.forceTURN ? 'relay' : 'all',
     };
     viewer.peerConnection = new RTCPeerConnection(configuration);
     if (conf.openDataChannel) {
