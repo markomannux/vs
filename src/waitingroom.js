@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', () => {
         socket.emit('guest:connected', {room_id, appointment_id}, (data) => {
-            console.log(data)
             if (data.guestWaitingElsewhere) {
                 setWaitingElsewhere();
             }
@@ -56,5 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             $('#video-cnt').show()
         })
     })
+
+    $('#share-screen-viewer-button').on('click', viewer.startScreenSharing)
 
 })

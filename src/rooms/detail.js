@@ -18,7 +18,6 @@ export default class RoomDetailController extends PageController {
 
         $('[data-behavior~=waiting-list]').on("click", 'button[data-behavior~=guest-join-button]', function(event) {
             const appointment = $(this).data('appointment')
-            console.log(appointment)
             SocketBus.socket.emit('operator:let-guest-enter', {appointment: appointment})
         })
     }

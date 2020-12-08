@@ -7,6 +7,9 @@ const master = {
     localStream: null,
     remoteStreams: [],
     peerConnectionStatsInterval: null,
+    renegotiate: false,
+    videoSenderByClientId: {},
+    audioSenderByClientId: {}
 };
 
 export async function startMaster(localView, remoteView, onStatsReport, onRemoteDataMessage) {
@@ -90,6 +93,7 @@ export async function startMaster(localView, remoteView, onStatsReport, onRemote
 
         // Send any ICE candidates to the other peer
         peerConnection.addEventListener('icecandidate', ({ candidate }) => {
+            if (master.renegotiate) return
             if (candidate) {
                 console.log('[MASTER] Generated ICE candidate for client: ' + remoteClientId);
 
@@ -109,6 +113,12 @@ export async function startMaster(localView, remoteView, onStatsReport, onRemote
             }
         });
 
+        master.signalingClient.on('sdpAnswer', async answer => {
+            // Add the SDP answer to the peer connection
+            console.log('[MASTER] Received SDP answer');
+            await master.peerConnection.setRemoteDescription(answer);
+        });
+
         // As remote tracks are received, add them to the remote view
         peerConnection.addEventListener('track', event => {
             console.log('[MASTER] Received remote track from client: ' + remoteClientId);
@@ -120,7 +130,15 @@ export async function startMaster(localView, remoteView, onStatsReport, onRemote
 
         // If there's no video/audio, master.localStream will be null. So, we should skip adding the tracks from it.
         if (master.localStream) {
-            master.localStream.getTracks().forEach(track => peerConnection.addTrack(track, master.localStream));
+            const videoTrack = master.localStream.getVideoTracks()[0]
+            if(videoTrack) {
+                master.videoSenderByClientId[remoteClientId] = peerConnection.addTrack(videoTrack, master.localStream)
+            }
+            const audioTrack = master.localStream.getAudioTracks()[0]
+            if(audioTrack) {
+                master.audioSenderByClientId[remoteClientId] = peerConnection.addTrack(audioTrack, master.localStream)
+            }
+            //master.localStream.getTracks().forEach(track => peerConnection.addTrack(track, master.localStream));
         }
         await peerConnection.setRemoteDescription(offer);
 
@@ -205,6 +223,25 @@ export function sendMasterMessage(message) {
             master.dataChannelByClientId[clientId].send(message);
         } catch (e) {
             console.error('[MASTER] Send DataChannel: ', e.toString());
+        }
+    });
+}
+
+export async function startScreenSharing() {
+    conf.widescreen = true
+    const resolution = conf.widescreen ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
+    const constraints = {
+        video: conf.sendVideo ? resolution : false,
+        audio: conf.sendAudio,
+    };
+    master.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+    master.localView.srcObject = master.localStream;
+
+    Object.keys(master.peerConnectionByClientId).forEach(clientId => {
+
+        if (master.videoSenderByClientId[clientId]) {
+            const videoTrack = master.localStream.getVideoTracks()[0]
+            master.videoSenderByClientId[clientId].replaceTrack(videoTrack)
         }
     });
 }

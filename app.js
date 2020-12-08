@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-const fetch         = require('node-fetch');
-const Headers       = require('node-fetch').Headers;
 var createError     = require('http-errors');
 var express         = require('express');
 var path            = require('path');
@@ -10,11 +8,9 @@ var logger          = require('morgan');
 var session         = require('express-session');
 const MongoStore    = require('connect-mongo')(session);
 var passport        = require('passport');
-var OAuth2Strategy  = require('passport-oauth2');
 const mongoose      = require('mongoose')
-const Schema        = mongoose.Schema;
-const jwt           = require('jsonwebtoken')
-const cognitoClient = require('./utils/cognito-client')
+const passportCognitoStrategy = require('./utils/passport-strategies/cognito')
+const passportTestStrategy = require('./utils/passport-strategies/test')
 
 const mongoOptions = {
   useNewUrlParser: true,
@@ -100,49 +96,11 @@ const env = (envName) => {
 }
 app.locals.env = env
 
-OAuth2Strategy.prototype.userProfile = cognitoClient.userProfile
+// Passport strategy
+passportCognitoStrategy(app, passport)
+//passportTestStrategy(app, passport)
 
-passport.use(new OAuth2Strategy({
-    authorizationURL: AUTH_URL,
-    tokenURL: TOKEN_URL,
-    clientID: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
-    callbackURL: CALLBACK_URL
-  },
-  async function(accessToken, refreshToken, profile, cb) {
-    const parsedProfile = JSON.parse(profile)
-    const parsedToken = jwt.decode(accessToken)
 
-    await User.findOneAndUpdate(
-      {
-        username: parsedProfile.username
-      },
-      {
-        username: parsedProfile.username,
-        email: parsedProfile.email,
-        roles: parsedToken['cognito:groups']
-      },
-      {
-        upsert: true
-      }
-    )
-    return cb(null, parsedProfile);
-  }
-));
-
-app.get('/login', passport.authenticate('oauth2',
-    {
-      scope: ['openid'],
-      successRedirect: '/',
-      failureRedirect: '/'
-    }))
-app.get('/auth/loginCallback', passport.authenticate('oauth2', { failureRedirect: '/'}), (req, res) => {
-  return res.redirect('/')
-})
-app.get('/auth/logoutCallback', (req, res) => {
-  req.logout()
-  res.redirect('/')
-})
 app.use('/admin', authUtils.hasRole('admin'), adminRouter);
 app.use('/admin/users', authUtils.hasRole('admin'), usersAdminRouter);
 app.use('/admin/rooms', authUtils.hasRole('admin'), roomsAdminRouter);

@@ -12,7 +12,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', async function(req, res, next) {
   const user = await User.findById(req.params.id).populate('rooms')
-  console.log(user.rooms)
   res.render('admin/users/detail', {user});
 });
 

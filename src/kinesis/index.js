@@ -15,12 +15,14 @@ $('#master-button').on('click', async () => {
 
     $('#master-button').hide()
     $('#stop-master-button').show()
+    $('#share-screen-master-button').show()
 });
 
 $('#stop-master-button').on('click', async () => {
     master.stopMaster()
     $('#master-button').show()
     $('#stop-master-button').hide()
+    $('#share-screen-master-button').hide()
 });
 
 $('#viewer-button').on('click', async () => {
@@ -33,3 +35,6 @@ $('#viewer-button').on('click', async () => {
 });
 
 $('#stop-viewer-button').on('click', viewer.stopViewer);
+
+$('#share-screen-master-button').on('click', master.startScreenSharing)
+$('#share-screen-viewer-button').on('click', viewer.startScreenSharing)

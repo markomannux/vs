@@ -70,7 +70,16 @@ export async function startViewer(localView, remoteView, onStatsReport, onRemote
         if (conf.sendVideo || conf.sendAudio) {
             try {
                 viewer.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-                viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
+
+                const videoTrack = viewer.localStream.getVideoTracks()[0]
+                if(videoTrack) {
+                    viewer.videoSender = viewer.peerConnection.addTrack(videoTrack, viewer.localStream)
+                }
+                const audioTrack = viewer.localStream.getAudioTracks()[0]
+                if(audioTrack) {
+                    viewer.audioSender = viewer.peerConnection.addTrack(audioTrack, viewer.localStream)
+                }
+                //viewer.localStream.getTracks().forEach(track => viewer.peerConnection.addTrack(track, viewer.localStream));
                 localView.srcObject = viewer.localStream;
             } catch (e) {
                 console.error('[VIEWER] Could not find webcam');
@@ -135,19 +144,34 @@ export async function startViewer(localView, remoteView, onStatsReport, onRemote
             }
         }
     });
-
+    
     // As remote tracks are received, add them to the remote view
     viewer.peerConnection.addEventListener('track', event => {
         console.log('[VIEWER] Received remote track');
-        if (remoteView.srcObject) {
-            return;
-        }
+        //if (remoteView.srcObject) {
+        //    return;
+        //}
         viewer.remoteStream = event.streams[0];
+        remoteView.srcObject = null
         remoteView.srcObject = viewer.remoteStream;
     });
 
+    viewer.signalingClient.on('sdpOffer', async offer => {
+        // Add the SDP answer to the peer connection
+        console.log('[VIEWER] Received SDP offer');
+        await viewer.peerConnection.setRemoteDescription(offer);
+        await viewer.peerConnection.setLocalDescription(
+            await viewer.peerConnection.createAnswer({
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true,
+            }),
+        );
+    })
+
     console.log('[VIEWER] Starting viewer connection');
     viewer.signalingClient.open();
+
+
 }
 
 export function stopViewer() {
@@ -197,5 +221,21 @@ export function sendViewerMessage(message) {
         } catch (e) {
             console.error('[VIEWER] Send DataChannel: ', e.toString());
         }
+    }
+}
+
+export async function startScreenSharing() {
+    conf.widescreen = true
+    const resolution = conf.widescreen ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
+    const constraints = {
+        video: conf.sendVideo ? resolution : false,
+        audio: conf.sendAudio,
+    };
+    viewer.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+    viewer.localView.srcObject = viewer.localStream;
+
+    if (viewer.videoSender) {
+        const videoTrack = viewer.localStream.getVideoTracks()[0]
+        viewer.videoSender.replaceTrack(videoTrack)
     }
 }

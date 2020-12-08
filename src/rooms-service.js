@@ -13,7 +13,6 @@ function fetchRooms() {
 }
 
 function fetchWaitingListHTML(roomId) {
-    console.log('service', roomId)
     var requestOptions = {
         method: 'GET',
         redirect: 'follow'

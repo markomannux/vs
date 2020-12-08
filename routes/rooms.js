@@ -35,9 +35,7 @@ router.get('/:id', async function(req, res, next) {
     title: room.name,
     room,
     waitingList: WaitingListService.waitingList(req.params.id),
-    planned: appointments,
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY
+    planned: appointments
   });
 });
 

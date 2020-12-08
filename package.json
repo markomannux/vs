@@ -25,6 +25,7 @@
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.1",
     "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
     "passport-oauth2": "^1.5.0",
     "passport.socketio": "^3.7.0",
     "pug": "2.0.0-beta11",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "css-loader": "^5.0.1",
+    "cypress": "^6.0.1",
     "nodemon": "^2.0.4",
     "postcss": "^8.1.6",
     "postcss-loader": "^4.0.4",

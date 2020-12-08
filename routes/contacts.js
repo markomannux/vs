@@ -5,30 +5,13 @@ const Appointment = require('../model/appointment')
 const dateUtils = require('../utils/date-utils')
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', async (req, res, next) => {
   Contact.find((err, contacts) => {
     res.render('contacts/index', {
       title: 'Contatti',
       contacts: contacts
     });
   });
-});
-
-router.post('/', async (req, res, next) => {
-  const contact = new Contact(req.body);
-  try {
-    await contact.save()
-    res.set('Content-Type', 'application/javascript')
-      .render('js/redirect', {redirect: `/contacts/${contact._id}`});
-  } catch (error) {
-    console.log(error)
-    res.set('Content-Type', 'application/javascript')
-      .render('js/renderForm', {
-        action: 'create',
-        resource: 'contacts',
-        model: contact,
-        errors: error.errors});
-  }
 });
 
 router.get('/:id', async (req, res, next) => {
@@ -44,6 +27,22 @@ router.get('/:id', async (req, res, next) => {
   });
 })
 
+router.post('/', async (req, res, next) => {
+  const contact = new Contact(req.body);
+  try {
+    await contact.save()
+    res.set('Content-Type', 'application/javascript')
+      .render('js/redirect', {redirect: `/contacts/${contact._id}`});
+  } catch (error) {
+    res.set('Content-Type', 'application/javascript')
+      .render('js/renderForm', {
+        action: 'create',
+        resource: 'contacts',
+        model: contact,
+        errors: error.errors});
+  }
+});
+
 router.delete('/:id', async (req, res, next) => {
   let contact = await Contact.findById(req.params.id)
   contact.remove((err, data) => {
@@ -52,6 +51,5 @@ router.delete('/:id', async (req, res, next) => {
       .render('js/redirect', {redirect: "/contacts"});
   })
 })
-
 
 module.exports = router;
