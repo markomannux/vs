@@ -1,4 +1,5 @@
-import * as conf from "./conf"; 
+import * as conf from "./conf";
+import {ScreenSharingHandler} from "./common"
 
 /**
  * This file demonstrates the process of starting WebRTC streaming using a KVS Signaling Channel.
@@ -8,6 +9,7 @@ const viewer = {};
 export async function startViewer(localView, remoteView, onStatsReport, onRemoteDataMessage) {
     viewer.localView = localView;
     viewer.remoteView = remoteView;
+    viewer.screenSharingHandler = new ScreenSharingHandler(viewer)
 
     const baseUrl = `${window.location.protocol}//${window.location.host}`
 
@@ -225,17 +227,11 @@ export function sendViewerMessage(message) {
 }
 
 export async function startScreenSharing() {
-    conf.widescreen = true
-    const resolution = conf.widescreen ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
-    const constraints = {
-        video: conf.sendVideo ? resolution : false,
-        audio: conf.sendAudio,
-    };
-    viewer.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
-    viewer.localView.srcObject = viewer.localStream;
+    viewer.screenSharingHandler.startScreenSharing(conf, switchTrack)
+}
 
+function switchTrack(track) {
     if (viewer.videoSender) {
-        const videoTrack = viewer.localStream.getVideoTracks()[0]
-        viewer.videoSender.replaceTrack(videoTrack)
+        viewer.videoSender.replaceTrack(track)
     }
 }

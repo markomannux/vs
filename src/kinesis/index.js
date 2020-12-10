@@ -1,5 +1,4 @@
 import * as master from "./master";
-import * as viewer from "./viewer";
 
 function onStatsReport(report) {
     // TODO: Publish stats
@@ -25,16 +24,4 @@ $('#stop-master-button').on('click', async () => {
     $('#share-screen-master-button').hide()
 });
 
-$('#viewer-button').on('click', async () => {
-    const localView = $('video')[0];
-    const remoteView = $('video')[1];
-
-    viewer.startViewer(localView, remoteView, onStatsReport, event => {
-        remoteMessage.append(`${event.data}\n`);
-    });
-});
-
-$('#stop-viewer-button').on('click', viewer.stopViewer);
-
 $('#share-screen-master-button').on('click', master.startScreenSharing)
-$('#share-screen-viewer-button').on('click', viewer.startScreenSharing)

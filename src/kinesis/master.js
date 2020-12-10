@@ -1,4 +1,5 @@
-import * as conf from "./conf"; 
+import * as conf from "./conf" 
+import {ScreenSharingHandler} from "./common"
 
 const master = {
     signalingClient: null,
@@ -15,6 +16,7 @@ const master = {
 export async function startMaster(localView, remoteView, onStatsReport, onRemoteDataMessage) {
     master.localView = localView;
     master.remoteView = remoteView;
+    master.screenSharingHandler = new ScreenSharingHandler(master)
 
     const baseUrl = `${window.location.protocol}//${window.location.host}`
 
@@ -227,21 +229,14 @@ export function sendMasterMessage(message) {
     });
 }
 
-export async function startScreenSharing() {
-    conf.widescreen = true
-    const resolution = conf.widescreen ? { width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 640 }, height: { ideal: 480 } };
-    const constraints = {
-        video: conf.sendVideo ? resolution : false,
-        audio: conf.sendAudio,
-    };
-    master.localStream = await navigator.mediaDevices.getDisplayMedia(constraints);
-    master.localView.srcObject = master.localStream;
+export function startScreenSharing() {
+    master.screenSharingHandler.startScreenSharing(conf, switchTrack)
+}
 
+function switchTrack(track) {
     Object.keys(master.peerConnectionByClientId).forEach(clientId => {
-
         if (master.videoSenderByClientId[clientId]) {
-            const videoTrack = master.localStream.getVideoTracks()[0]
-            master.videoSenderByClientId[clientId].replaceTrack(videoTrack)
+            master.videoSenderByClientId[clientId].replaceTrack(track)
         }
     });
 }
