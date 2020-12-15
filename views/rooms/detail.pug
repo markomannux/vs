@@ -23,8 +23,8 @@ block content
 
         <div class="w-1/3 px-8">
           h2.text-lg.font-bold.mb-2 In corso
-          div.mb-3
-            p.text-gray-600 Nessun appuntamento in corso
+          div(class="mb-3", data-behavior='current')
+            include fragments/current
           h2.text-lg.font-bold.mb-2 Sala d'attesa
           div(class="mb-3", data-behavior='waiting-list')
             include fragments/waiting_list

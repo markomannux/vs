@@ -39,6 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
+    socket.on('conference:end', () => {
+        viewer.stopViewer()
+    })
+
     socket.on('connect', () => {
         socket.emit('guest:connected', {room_id, appointment_id}, (data) => {
             if (data.guestWaitingElsewhere) {

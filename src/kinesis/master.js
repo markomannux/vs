@@ -124,10 +124,12 @@ export async function startMaster(localView, remoteView, onStatsReport, onRemote
         // As remote tracks are received, add them to the remote view
         peerConnection.addEventListener('track', event => {
             console.log('[MASTER] Received remote track from client: ' + remoteClientId);
-            if (remoteView.srcObject) {
-                return;
-            }
-            remoteView.srcObject = event.streams[0];
+            //if (remoteView.srcObject) {
+            //    return;
+            //}
+            master.remoteStream = event.streams[0];
+            remoteView.srcObject = null
+            remoteView.srcObject = master.remoteStream;
         });
 
         // If there's no video/audio, master.localStream will be null. So, we should skip adding the tracks from it.

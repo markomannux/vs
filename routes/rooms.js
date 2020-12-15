@@ -35,6 +35,7 @@ router.get('/:id', async function(req, res, next) {
     title: room.name,
     room,
     waitingList: WaitingListService.waitingList(req.params.id),
+    currentAppointment: WaitingListService.getCurrentAppointment(req.params.id),
     planned: appointments
   });
 });
@@ -43,6 +44,9 @@ router.get('/:id/fragments/waitingList', (req, res, next) => {
   res.render('rooms/fragments/waiting_list', {waitingList: WaitingListService.waitingList(req.params.id)});
 })
 
+router.get('/:id/fragments/current', (req, res, next) => {
+  res.render('rooms/fragments/current', {currentAppointment: WaitingListService.getCurrentAppointment(req.params.id)});
+})
 
 /**
  * Test only

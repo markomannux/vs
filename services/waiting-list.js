@@ -1,4 +1,5 @@
-const _waitingLists = { };
+const _waitingLists = { }
+const _currentAppointments = { }
 
 function waitingLists() {
     return {..._waitingLists};
@@ -27,10 +28,28 @@ function removeFromWaitingList(appointment) {
     }
 }
 
+function getCurrentAppointment(room) { 
+    return _currentAppointments[room]
+}
+
+function setAsCurrentAppointment(appointment) {
+    if (appointment) {
+        removeFromWaitingList(appointment)
+        _currentAppointments[appointment.room._id] = appointment
+    }
+}
+
+function clearCurrentAppointment(room) {
+    delete _currentAppointments[room]
+}
+
 module.exports = {
     waitingLists,
     waitingList,
     isWaiting,
     addToWaitingList,
-    removeFromWaitingList
+    removeFromWaitingList,
+    getCurrentAppointment,
+    setAsCurrentAppointment,
+    clearCurrentAppointment
 }

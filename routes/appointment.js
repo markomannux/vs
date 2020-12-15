@@ -17,7 +17,14 @@ router.post('/', async function(req, res, next) {
 
 router.get('/:id/waitingroom', async function(req, res, next) {
     let appointment = await Appointment.findById(req.params.id);
-    console.log(`Sending to waiting room for appointment ${appointment.id}: room ${appointment.room}`);
+
+    if (appointment.finished) {
+        return res.render('waiting_room/finished', {
+            title: "Concluso",
+            appointment
+        })
+    }
+
     res.render('waiting_room/index', {
         title: "Sala d'attesa",
         appointment

@@ -12,6 +12,16 @@ function fetchRooms() {
     })
 }
 
+function fetchCurrentAppointmentHTML(roomId) {
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    }
+
+    return fetch(`/rooms/${roomId}/fragments/current`, requestOptions)
+    .then(response => response.text())
+};
+
 function fetchWaitingListHTML(roomId) {
     var requestOptions = {
         method: 'GET',
@@ -24,5 +34,6 @@ function fetchWaitingListHTML(roomId) {
 
 export {
     fetchRooms,
+    fetchCurrentAppointmentHTML,
     fetchWaitingListHTML
 }

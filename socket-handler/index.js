@@ -2,6 +2,7 @@ const Room = require('../model/room');
 const User = require('../model/user');
 const Appointment = require('../model/appointment');
 const WaitingListService = require('../services/waiting-list');
+const waitingList = require('../services/waiting-list');
 
 const SocketHandler = (io) => {
 
@@ -56,10 +57,22 @@ const SocketHandler = (io) => {
             fn('ACK');
         }
 
-        const handleStartConference = async (data) => {
+        const handleStartConference = async (data, fn) => {
             console.log('starting conference', data);
             const appointment = await Appointment.findById(data.appointment);
+            waitingList.setAsCurrentAppointment(appointment)
             socket.to(`${appointment.room._id}:${appointment._id}`).emit('conference:start')
+            fn('ACK')
+        }
+
+        const handleEndConference = async (data, fn) => {
+            console.log('ending conference', data);
+            const appointment = await Appointment.findById(data.appointment);
+            appointment.finished = true
+            await appointment.save()
+            waitingList.clearCurrentAppointment(appointment.room._id)
+            socket.to(`${appointment.room._id}:${appointment._id}`).emit('conference:end')
+            fn('ACK')
         }
 
         /**
@@ -79,10 +92,12 @@ const SocketHandler = (io) => {
             WaitingListService.removeFromWaitingList(appointment);
             console.log('current waiting lists', WaitingListService.waitingLists());
             socket.to(appointment.room._id).emit('guest:disconnect', JSON.stringify(appointment));
+            waitingList.clearCurrentAppointment(appointment.room._id)
         }
 
         socket.on('operator:connected', handleOperatorConnected)
         socket.on('operator:let-guest-enter', handleStartConference)
+        socket.on('operator:terminate', handleEndConference)
         socket.on('guest:connected', handleGuestConnected)
         socket.on('disconnect', handleDisconnect)
     })
