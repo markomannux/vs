@@ -2,20 +2,18 @@ const Room = require('../model/room');
 const User = require('../model/user');
 const Appointment = require('../model/appointment');
 const WaitingListService = require('../services/waiting-list');
-const waitingList = require('../services/waiting-list');
+const app = require('../app');
 
-const SocketHandler = (io) => {
+function SocketHandler(io) {
 
     io.on('connection', socket => {
         console.log('new client connected');
 
         const handleOperatorConnected = (data) => {
             const sessionData = socket.request.session
-            console.log('new operator connected', sessionData.passport.user);
             User.findOne({ username: sessionData.passport.user})
             .then(user => {
                 user.rooms.forEach(room => {
-                    console.log(`joining room ${room._id}`);
                     socket.join(room._id);
                 })
             })
@@ -24,9 +22,7 @@ const SocketHandler = (io) => {
         let appointment;
 
         const handleGuestConnected = async (data, fn) => {
-            console.log('new guest waiting', data);
             appointment = await Appointment.findById(data.appointment_id);
-            console.log('Already waiting', WaitingListService.isWaiting(appointment));
             socket.join(`${appointment.room._id}:${appointment._id}`);
             if (WaitingListService.isWaiting(appointment)) {
                 fn({
@@ -35,7 +31,6 @@ const SocketHandler = (io) => {
             } else {
                 WaitingListService.addToWaitingList(appointment);
                 socket.on('disconnect', handleGuestDisconnect) // register cleanup behavior
-                socket.to(appointment.room._id).emit('guest:waiting', JSON.stringify(appointment));
                 fn({
                     guestWaitingElsewhere: false
                 })
@@ -57,24 +52,6 @@ const SocketHandler = (io) => {
             fn('ACK');
         }
 
-        const handleStartConference = async (data, fn) => {
-            console.log('starting conference', data);
-            const appointment = await Appointment.findById(data.appointment);
-            waitingList.setAsCurrentAppointment(appointment)
-            socket.to(`${appointment.room._id}:${appointment._id}`).emit('conference:start')
-            fn('ACK')
-        }
-
-        const handleEndConference = async (data, fn) => {
-            console.log('ending conference', data);
-            const appointment = await Appointment.findById(data.appointment);
-            appointment.finished = true
-            await appointment.save()
-            waitingList.clearCurrentAppointment(appointment.room._id)
-            socket.to(`${appointment.room._id}:${appointment._id}`).emit('conference:end')
-            fn('ACK')
-        }
-
         /**
          * Generic disconnect behavior 
          * @param {*} s 
@@ -88,19 +65,39 @@ const SocketHandler = (io) => {
          * @param {*} appointment 
          */
         const handleGuestDisconnect = (s) => {
-            console.log('guest disconnected');
             WaitingListService.removeFromWaitingList(appointment);
-            console.log('current waiting lists', WaitingListService.waitingLists());
-            socket.to(appointment.room._id).emit('guest:disconnect', JSON.stringify(appointment));
-            waitingList.clearCurrentAppointment(appointment.room._id)
+            if (WaitingListService.getCurrentAppointment(appointment.room._id) === appointment._id)
+            WaitingListService.clearCurrentAppointment(appointment.room._id)
         }
 
         socket.on('operator:connected', handleOperatorConnected)
-        socket.on('operator:let-guest-enter', handleStartConference)
-        socket.on('operator:terminate', handleEndConference)
         socket.on('guest:connected', handleGuestConnected)
         socket.on('disconnect', handleDisconnect)
     })
+
+    this.broadcastGuestWaiting = function(appointment) {
+        if (appointment) {
+            io.to(appointment.room._id).emit('guest:waiting', JSON.stringify(appointment));
+        }
+    }
+
+    this.broadcastGuestLeft = function(appointment) {
+        if (appointment) {
+            io.to(appointment.room._id).emit('guest:disconnect', JSON.stringify(appointment));
+        }
+    }
+
+    this.broadcastConferenceStarted = function(appointment) {
+        if (appointment) {
+            io.to(`${appointment.room._id}:${appointment._id}`).emit('conference:start')
+        }
+    }
+
+    this.broadcastConferenceEnded = function(appointment) {
+        if (appointment) {
+            io.to(`${appointment.room._id}:${appointment._id}`).emit('conference:end')
+        }
+    }
 }
 
 module.exports = SocketHandler

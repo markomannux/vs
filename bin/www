@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('vs:server');
 var http = require('http');
+var WaitingListService = require('../services/waiting-list')
 
 /**
  * Get port from environment and store in Express.
@@ -28,7 +29,25 @@ const io = require('socket.io')(server);
 io.use((socket, next) => {
   app.sessionMiddleware(socket.request, {}, next)
 })
-const SocketHandler = require('../socket-handler')(io);
+const SocketHandler = require('../socket-handler')
+const socketHandler = new SocketHandler(io);
+
+WaitingListService.waitingListEventEmitter.on('waitinglist:added', (appointment) => {
+  socketHandler.broadcastGuestWaiting(appointment)
+})
+
+WaitingListService.waitingListEventEmitter.on('waitinglist:removed', (appointment) => {
+  socketHandler.broadcastGuestLeft(appointment)
+})
+
+WaitingListService.waitingListEventEmitter.on('waitinglist:newcurrent', (appointment) => {
+  socketHandler.broadcastConferenceStarted(appointment)
+})
+
+WaitingListService.waitingListEventEmitter.on('waitinglist:currentcleared', (appointment) => {
+  socketHandler.broadcastConferenceEnded(appointment)
+})
+
 
 /**
  * Listen on provided port, on all network interfaces.

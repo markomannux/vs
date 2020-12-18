@@ -18,6 +18,7 @@ function secretAccessKeyValue() {
 module.exports = [{
     target: "web",
     watch: true,
+    devtool: 'inline-source-map',
     entry: {
         admin: './src/admin/index.js',
         index: './src/index.js',

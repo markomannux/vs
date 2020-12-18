@@ -1,12 +1,14 @@
+const events = require('events')
 const _waitingLists = { }
 const _currentAppointments = { }
+const waitingListEventEmitter = new events.EventEmitter()
 
 function waitingLists() {
     return {..._waitingLists};
 }
 
-function waitingList(room) {
-    return [..._waitingLists[room] || []]
+function waitingList(roomId) {
+    return [..._waitingLists[roomId] || []]
 }
 
 function isWaiting(appointment) {
@@ -19,12 +21,14 @@ function isWaiting(appointment) {
 function addToWaitingList(appointment) {
     if (!isWaiting(appointment)) {
         _waitingLists[appointment.room._id] = [...(_waitingLists[appointment.room._id] || []), appointment];
+        waitingListEventEmitter.emit('waitinglist:added', appointment)
     }
 }
 
 function removeFromWaitingList(appointment) {
     if (appointment) {
         _waitingLists[appointment.room._id].splice(_waitingLists[appointment.room._id].indexOf(appointment), 1);
+        waitingListEventEmitter.emit('waitinglist:removed', appointment)
     }
 }
 
@@ -36,11 +40,14 @@ function setAsCurrentAppointment(appointment) {
     if (appointment) {
         removeFromWaitingList(appointment)
         _currentAppointments[appointment.room._id] = appointment
+        waitingListEventEmitter.emit('waitinglist:newcurrent', appointment)
     }
 }
 
-function clearCurrentAppointment(room) {
-    delete _currentAppointments[room]
+function clearCurrentAppointment(roomId) {
+    const appointment = _currentAppointments[roomId]
+    delete _currentAppointments[roomId]
+    waitingListEventEmitter.emit('waitinglist:currentcleared', appointment)
 }
 
 module.exports = {
@@ -51,5 +58,6 @@ module.exports = {
     removeFromWaitingList,
     getCurrentAppointment,
     setAsCurrentAppointment,
-    clearCurrentAppointment
+    clearCurrentAppointment,
+    waitingListEventEmitter
 }

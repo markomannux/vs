@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Appointment = require('../model/appointment');
 const dateUtils = require('../utils/date-utils')
+const WaitingListService = require('../services/waiting-list');
 
 router.post('/', async function(req, res, next) {
     let appointment = new Appointment(req.body);
@@ -29,6 +30,20 @@ router.get('/:id/waitingroom', async function(req, res, next) {
         title: "Sala d'attesa",
         appointment
     });
+})
+
+router.post('/:id/start', async (req, res, next) => {
+    console.log('starting conference', req.params.id);
+    const appointment = await Appointment.findById(req.params.id);
+    WaitingListService.setAsCurrentAppointment(appointment)
+    res.send('')
+})
+
+router.post('/:id/end', async (req, res, next) => {
+    console.log('ending conference', req.params.id);
+    const appointment = await Appointment.findById(req.params.id);
+    WaitingListService.clearCurrentAppointment(appointment.room._id)
+    res.send('')
 })
 
 router.delete('/:id', async function(req, res, next) {
