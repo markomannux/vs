@@ -1,19 +1,26 @@
 var express = require('express');
 var router = express.Router();
 const Appointment = require('../model/appointment');
+const Room = require('../model/room')
 const dateUtils = require('../utils/date-utils')
 const WaitingListService = require('../services/waiting-list');
+const bindAndValidate = require('../utils/bind-and-validate')
+const redirect = require('../utils/redirect')
 
-router.post('/', async function(req, res, next) {
-    let appointment = new Appointment(req.body);
+
+formDataHook = async () => {
+    return {rooms: await Room.find({})}
+}
+
+router.post('/', bindAndValidate(Appointment, 'create', 'appointment', formDataHook), async function(req, res, next) {
+    let appointment = req.boundModel
+
     if (!appointment.end) {
         appointment.end = dateUtils.addMinutes(appointment.start, 30)
     }
     appointment = await appointment.save();
     const redirectTo = req.query.redirectTo || '/calendar'
-    res
-    .set('Content-Type', 'application/javascript')
-    .render('js/redirect', {redirect: redirectTo});
+    redirect(res, redirectTo)
 });
 
 router.get('/:id/waitingroom', async function(req, res, next) {
@@ -50,9 +57,7 @@ router.delete('/:id', async function(req, res, next) {
     let appointment = await Appointment.findById(req.params.id);
     await appointment.remove()
     const redirectTo = req.query.redirectTo || '/calendar'
-    res
-    .set('Content-Type', 'application/javascript')
-    .render('js/redirect', {redirect: redirectTo});
+    redirect(res, redirectTo)
 });
 
 module.exports = router;

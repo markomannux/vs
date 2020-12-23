@@ -96,6 +96,8 @@ const env = (envName) => {
 }
 app.locals.env = env
 
+app.locals.Room = require('./model/room')
+
 // Passport strategy
 passportCognitoStrategy(app, passport)
 //passportTestStrategy(app, passport)

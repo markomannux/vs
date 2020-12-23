@@ -1,0 +1,4 @@
+mixin form_errors(errors)
+    section
+        each error in errors
+            div error.#{error.path}.#{error.kind}

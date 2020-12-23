@@ -21,31 +21,22 @@ block content
               </svg>
             </div>
             <div class="flex flex-col items-center text-center justify-center">
-              <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">#{contact.fullName}</h2>
+              <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">#{model.contact.fullName}</h2>
               <div class="w-12 h-1 bg-indigo-500 rounded mt-2 mb-4"></div>
-              <p class="text-base text-gray-600">#{contact.email}</p>
+              <p class="text-base text-gray-600">#{model.contact.email}</p>
             </div>
           </div>
           <div class="sm:w-2/3 sm:pl-8 sm:py-8 sm:border-l border-gray-300 sm:border-t-0 border-t mt-4 pt-4 sm:mt-0 text-center sm:text-left">
 
             button(data-behavior="new-appointment-button" class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md object-none object-right") Nuovo appuntamento
 
-            form(action=`/appointments?redirectTo=/contacts/${contact._id}`, data-remote="true", method="post" class="hidden" data-behavior='new-appointment-form')
-              <div class="p-4 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
-                - var _model = model || {}
-                - var _errors = errors || {}
-              
-                +form_control('summary', 'text', 'Titolo', errors)(value=_model.summary)
-                +form_control('start', 'datetime-local', 'Data', errors)(value=_model.start)
-                +form_select('room', 'Stanza', errors)(value=_model.room, data-behavior="room-select")
-                +form_textarea('notes', 'Note', errors)(value=_model.room)
 
-                input(type="hidden", name="contact", value=`${contact._id}`)
-                input(type="submit", value="Inserisci", class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg")
-              </div>
+            div(data-behavior="add-appointment-form-container" class="hidden")
+              include ../appointment/fragments/_create_form.pug
+
             div
               <h2 class="font-medium title-font mt-8 mb-4 text-gray-900 text-lg">Prossimi appuntamenti</h2>
-                each appointment in appointments
+                each appointment in model.appointments
                   <div class="flex relative pb-12">
                     <div class="h-full w-10 absolute inset-0 flex items-center justify-center">
                       <div class="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -60,12 +51,12 @@ block content
                       <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.start)}</h2>
                       <p class="leading-relaxed">#{appointment.summary}</p>
                       <p class="leading-relaxed">#{appointment.notes}</p>
-                      a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${contact._id}`, data-remote='true', data-method='delete') Elimina
+                      a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${model.contact._id}`, data-remote='true', data-method='delete') Elimina
                     </div>
                   </div>
 
               <h2 class="font-medium title-font mt-8 mb-4 text-gray-900 text-lg">Appuntamenti precedenti</h2>
-                each appointment in pastAppointments
+                each appointment in model.pastAppointments
                   <div class="flex relative pb-12">
                     <div class="h-full w-10 absolute inset-0 flex items-center justify-center">
                       <div class="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -80,7 +71,7 @@ block content
                       <h2 class="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">#{helperFormatDate(appointment.start)}</h2>
                       <p class="leading-relaxed">#{appointment.summary}</p>
                       <p class="leading-relaxed">#{appointment.notes}</p>
-                      a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${contact._id}`, data-remote='true', data-method='delete') Elimina
+                      a(href=`/appointments/${appointment._id}?redirectTo=/contacts/${model.contact._id}`, data-remote='true', data-method='delete') Elimina
                     </div>
                   </div>
           </div>

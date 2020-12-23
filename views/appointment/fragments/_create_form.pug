@@ -1,0 +1,20 @@
+include ../../mixins/_form_control
+include ../../mixins/_form_select
+include ../../mixins/_form_textarea
+include ../../mixins/_form_errors
+
+
+- var _model = model || {}
+- var _errors = errors || {}
+
+form(action=`/appointments?redirectTo=/contacts/${_model.contact._id}`, data-remote="true", method="post" data-behavior='create-appointment-form')
+    +form_errors(_errors)
+    <div class="p-4 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+        +form_control('summary', 'text', 'Titolo', errors)(value=_model.summary)
+        +form_control('start', 'datetime-local', 'Data', errors)(value=_model.start)
+        +form_select('room', 'Stanza', errors, {entries: _model.rooms})(value=_model.room, data-behavior="room-select")
+        +form_textarea('notes', 'Note', errors)(value=_model.room)
+
+        input(type="hidden", name="contact", value=`${_model.contact._id}`)
+        input(type="submit", value="Inserisci", class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg")
+    </div>

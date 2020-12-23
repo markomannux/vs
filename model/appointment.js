@@ -4,25 +4,29 @@ const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema({
   summary: {
-    type: String
+    type: String,
+    required: true
   },
   contact: {
-      type: Schema.Types.ObjectId, ref: 'Contact'
+    type: Schema.Types.ObjectId, ref: 'Contact',
+    required: true
   },
   room: {
-      type: Schema.Types.ObjectId, ref: 'Room'
+    type: Schema.Types.ObjectId, ref: 'Room',
+    required: true
   },
   start: {
-      type: Date
+    type: Date,
+    required: true
   },
   end: {
-      type: Date
+    type: Date
   },
   notes: {
-      type: String
+    type: String
   },
   finished: {
-      type: Boolean
+    type: Boolean
   }
 
 })
