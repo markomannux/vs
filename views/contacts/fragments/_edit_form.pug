@@ -1,0 +1,26 @@
+include ../../mixins/_button
+include ../../mixins/_form_control
+include ../../mixins/_form_errors
+
+
+- var _model = model || {}
+- var _errors = errors || {}
+
+<form action="/contacts/edit" data-behavior="edit-contacts-form" data-remote="true" method="post">
+    +form_errors(_errors)
+
+    <div class="w-20 h-20 rounded-full inline-flex items-center justify-center bg-gray-200 text-gray-400">
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    </div>
+    <div class="flex flex-col items-center text-center justify-center">
+        +form_control('fullName', 'text', null, errors)(value=_model.contact.fullName)
+        <div class="w-12 h-1 bg-indigo-500 rounded mt-2 mb-4"></div>
+        +form_control('email', 'text', null, errors)(value=_model.contact.email)
+        +form_control('_id', 'hidden')(value=_model.contact._id)
+
+        +button('Salva')
+    </div>
+</form>

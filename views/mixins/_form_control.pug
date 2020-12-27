@@ -1,5 +1,6 @@
 mixin form_control(field, type, label, errors = {})
     <div class="relative sm:mr-4 mb-4 sm:mb-0 flex-grow w-full">
-        label(for=field class="leading-7 text-sm text-gray-600") #{label}
+        if label
+            label(for=field class="leading-7 text-sm text-gray-600") #{label}
         input(type=type id=field name=field class=`w-full bg-gray-100 rounded border border-${errors[field]? 'red' : 'gray'}-300 focus:border-${errors[field]? 'red' : 'gray'}-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out`)&attributes(attributes)
     </div>

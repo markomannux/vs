@@ -1,0 +1,11 @@
+include ../../../mixins/_form_control
+include ../../../mixins/_form_errors
+
+- var _model = model || {}
+- var _errors = errors || {}
+
+form(action="/admin/rooms", data-remote=true, method="post", data-behavior='create-admin-rooms-form')
+    +form_errors(_errors)
+    +form_control('name', 'text', 'Nome', errors)
+    |
+    button(type="submit") Invia

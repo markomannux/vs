@@ -44,6 +44,12 @@ router.post('/', bindAndValidate(Contact, 'create', 'contacts'), async (req, res
   redirect(res, `/contacts/${contact._id}`)
 });
 
+router.post('/edit', bindAndValidate(Contact, 'create', 'contacts'), async (req, res, next) => {
+  let contact = await Contact.findById(req.boundModel._id)
+  await contact.update(req.boundModel)
+  redirect(res, `/contacts/${contact._id}`)
+});
+
 router.delete('/:id', async (req, res, next) => {
   let contact = await Contact.findById(req.params.id)
   contact.remove((err, data) => {
